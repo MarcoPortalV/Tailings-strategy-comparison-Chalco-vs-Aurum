@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tailings strategy comparison: Chalco vs Aurum | MNGN 581 Assignment 4 | Marco Portal Valdivia</title>
+<meta name="description" content="Interactive 3D comparison of tailings management for Project Chalco (Cu–Mo open pit and TSF) and Project Aurum (underground gold mine, paste backfill and filtered stack). MNGN 581, Colorado School of Mines.">
+<meta name="author" content="Marco Portal Valdivia">
+<meta property="og:title" content="Tailings strategy comparison: Chalco vs Aurum">
+<meta property="og:description" content="Open pit with a thickened-slurry TSF versus an underground mine with cemented paste fill and a filtered stack, built from the laboratory data. English and Spanish.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛰️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#E4EAEC;--panel:rgba(247,250,251,.94);--panel-solid:#F7FAFB;--ink:#17222A;--muted:#51606B;--rule:rgba(23,34,42,.16);
+  --cu:#17806A;--cu-soft:rgba(23,128,106,.10);--au:#B07A0E;--au-soft:rgba(176,122,14,.11);
+  --water:#2E7DC0;--slurry:#7A6A58;--paste:#A88F5C;--hl:#C8473A;--focus:#2F6DB5;
+  --btn:#FFFFFF;--btn-on:#17222A;--btn-on-ink:#F4F7F8;color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1417;--panel:rgba(19,27,32,.93);--panel-solid:#131B20;--ink:#E3E9EC;--muted:#98A6AF;--rule:rgba(227,233,236,.16);
+  --cu:#3DBB9C;--cu-soft:rgba(61,187,156,.13);--au:#E2AE3E;--au-soft:rgba(226,174,62,.13);
+  --water:#6AAEE6;--slurry:#B9A58C;--paste:#D3BC88;--hl:#F0806F;--focus:#7DB0EA;
+  --btn:#1B252B;--btn-on:#E3E9EC;--btn-on-ink:#0E1417;color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0E1417;--panel:rgba(19,27,32,.93);--panel-solid:#131B20;--ink:#E3E9EC;--muted:#98A6AF;--rule:rgba(227,233,236,.16);
+  --cu:#3DBB9C;--cu-soft:rgba(61,187,156,.13);--au:#E2AE3E;--au-soft:rgba(226,174,62,.13);
+  --water:#6AAEE6;--slurry:#B9A58C;--paste:#D3BC88;--hl:#F0806F;--focus:#7DB0EA;
+  --btn:#1B252B;--btn-on:#E3E9EC;--btn-on-ink:#0E1417;color-scheme:dark;}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45}
+#stage{position:relative;width:100%;height:100%;overflow:hidden}
+#c{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+#labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;white-space:nowrap;font:500 12px/1.15 "Barlow Semi Condensed","Barlow",system-ui,sans-serif;padding:3px 7px;border-radius:4px;background:var(--panel);border:1px solid var(--rule);color:var(--ink)}
+.lbl.cu{border-left:3px solid var(--cu)}.lbl.au{border-left:3px solid var(--au)}
+.lbl.site{font:600 15px/1.15 "Barlow",system-ui,sans-serif;padding:6px 11px;border-radius:6px;border-left-width:5px}
+.lbl.site small{display:block;font:500 12px/1.3 "Barlow Semi Condensed",sans-serif;color:var(--muted);margin-top:2px}
+.panel{position:absolute;z-index:10;background:var(--panel);border:1px solid var(--rule);border-radius:10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#head{top:14px;left:14px;width:310px;padding:14px 16px 12px}
+.brand{margin:-14px -16px 12px;padding:14px 16px;background:#21314D;border-radius:10px 10px 0 0}
+.brand img{display:block;height:34px;width:auto}
+h1{font:600 21px/1.15 "Barlow",system-ui,sans-serif;margin:0;letter-spacing:-.01em}
+.sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+.course{margin:10px 0 0;font:600 13px/1.3 "Barlow Semi Condensed",system-ui,sans-serif}
+.meta{display:grid;grid-template-columns:78px 1fr;gap:3px 10px;margin:10px 0 0;font-size:13px}
+.meta dt{color:var(--muted);font-weight:500}.meta dd{margin:0;font-weight:500}
+.langs{position:absolute;top:74px;right:12px;display:flex;gap:2px}
+.langs button{border:0;background:transparent;color:var(--muted);font:600 12px/1 "Barlow Semi Condensed",sans-serif;padding:4px 5px;cursor:pointer;border-radius:4px}
+.langs button[aria-pressed="true"]{color:var(--ink);background:var(--rule)}
+#ctrl{top:250px;left:14px;width:310px;padding:12px 16px 14px;max-height:calc(100% - 264px);overflow:auto}
+.group{padding:10px 0;border-top:1px solid var(--rule)}
+.group:first-of-type{border-top:0;padding-top:2px}
+.gt{font:600 12px/1 "Barlow Semi Condensed",system-ui,sans-serif;color:var(--muted);margin:0 0 8px;letter-spacing:.02em}
+.chk{display:flex;align-items:center;gap:8px;margin:5px 0;cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--focus);flex:none}
+.sw{width:12px;height:12px;border-radius:2px;flex:none;display:inline-block}
+.row{display:flex;gap:6px}
+.btn{flex:1;border:1px solid var(--rule);background:var(--btn);color:var(--ink);border-radius:7px;padding:8px 6px;font:500 14px/1 "Barlow",system-ui,sans-serif;cursor:pointer}
+.btn.primary{background:var(--btn-on);color:var(--btn-on-ink);border-color:transparent}
+.seg{display:flex;border:1px solid var(--rule);border-radius:7px;overflow:hidden}
+.seg button{flex:1;border:0;background:var(--btn);color:var(--ink);font:500 13px/1.1 "Barlow",system-ui,sans-serif;padding:8px 4px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button[aria-pressed="true"]{background:var(--btn-on);color:var(--btn-on-ink)}
+.focusgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.focusgrid .btn{padding:9px 6px;text-align:left;font-size:13px;display:flex;align-items:center;gap:7px}
+.focusgrid .btn[aria-pressed="true"]{background:var(--btn-on);color:var(--btn-on-ink);border-color:transparent}
+.sl{margin:6px 0 10px}
+.sl label{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted)}
+.sl output{color:var(--ink);font:600 13px/1.4 "Barlow Semi Condensed",sans-serif;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--focus);margin:4px 0 0}
+#c_cu input[type=range]{accent-color:var(--cu)}#c_au input[type=range]{accent-color:var(--au)}
+.help{color:var(--muted);font-size:12px;margin:0}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+#info{top:14px;right:14px;width:440px;padding:0;max-height:calc(100vh - 200px);overflow:auto}
+#info > summary{list-style:none;cursor:pointer;padding:14px 16px;font:600 17px/1.2 "Barlow",system-ui,sans-serif;position:relative}
+#info > summary::-webkit-details-marker{display:none}
+#info > summary::after{content:"–";float:right;color:var(--muted)}
+#info:not([open]) > summary::after{content:"+"}
+#infobody{padding:0 16px 14px}
+table.c{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+table.c th,table.c td{padding:5px 4px;border-top:1px solid var(--rule);text-align:right;vertical-align:top}
+table.c th:first-child,table.c td:first-child{text-align:left;color:var(--muted);font-weight:500;padding-left:0}
+table.c thead th{border-top:0;font-weight:600}
+table.c tr.sect td{color:var(--ink);font:600 12px/1 "Barlow Semi Condensed",sans-serif;padding-top:12px;border-top:0;letter-spacing:.02em}
+table.c td.n{font:600 13px/1.3 "Barlow Semi Condensed",sans-serif;color:var(--ink)}
+table.c td.min{font:500 12px/1.3 "Barlow Semi Condensed",sans-serif;color:var(--ink);text-align:left;width:34%}
+table.c td small{display:block;font-weight:500;color:var(--muted)}
+.ccu{color:var(--cu)}.cau{color:var(--au)}
+.note{margin:12px 0 0;padding:9px 11px;border-left:3px solid var(--au);background:var(--au-soft);font-size:13px}
+.box{background:var(--panel-solid);border:1px solid var(--rule);border-radius:8px;margin-top:10px}
+#phBox{padding:8px 10px}
+#phBox svg{display:block;width:100%;height:auto}
+#secBox{height:280px;padding:6px}
+ol.seclg{list-style:none;margin:8px 0 0;padding:0;columns:2;column-gap:14px;font-size:12.5px}
+ol.seclg li{display:flex;gap:6px;align-items:baseline;break-inside:avoid;margin:0 0 3px}
+ol.seclg b{flex:none;width:16px;height:16px;border-radius:50%;background:var(--ink);color:var(--panel-solid);font:600 10px/16px "Barlow Semi Condensed",sans-serif;text-align:center}
+#secBox canvas{width:100%;height:100%;display:block}
+.dec{border-top:1px solid var(--rule);padding:10px 0 8px}
+.dec:first-child{border-top:0}
+.dec h3{margin:0 0 6px;font:600 14px/1.25 "Barlow",system-ui,sans-serif;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dec h3 .req{font:500 11px/1 "Barlow Semi Condensed",sans-serif;color:var(--muted);white-space:nowrap}
+.dec p{margin:0 0 6px;padding:5px 9px;font-size:13px;border-radius:0 6px 6px 0}
+.dec p.pcu{border-left:3px solid var(--cu);background:var(--cu-soft)}
+.dec p.pau{border-left:3px solid var(--au);background:var(--au-soft)}
+.dec p b{font:600 12px/1 "Barlow Semi Condensed",sans-serif;margin-right:4px}
+.dec .show{border:0;background:transparent;color:var(--focus);font:600 12px/1 "Barlow Semi Condensed",sans-serif;cursor:pointer;padding:3px 0}
+.integ{margin-top:14px;padding-top:10px;border-top:2px solid var(--ink)}
+.integ h3{margin:0 0 6px;font:600 15px/1.25 "Barlow",system-ui,sans-serif}
+.integ p{margin:0 0 8px;font-size:13px}
+details.assump{margin-top:14px;border-top:1px solid var(--rule);padding-top:10px}
+details.assump summary{cursor:pointer;font-weight:600}
+details.assump p{margin:8px 0;color:var(--muted);font-size:13px}
+.tabp[hidden]{display:none}
+.grip{display:block;width:44px;height:14px;margin:-6px auto 2px;cursor:move;border-radius:6px;position:relative;touch-action:none}
+.grip::before{content:"";position:absolute;left:8px;right:8px;top:5px;height:4px;border-radius:2px;background:var(--rule)}
+.grip:hover::before{background:var(--muted)}
+.brand .grip::before{background:rgba(255,255,255,.35)}
+.brand .grip:hover::before{background:rgba(255,255,255,.7)}
+#info .grip{position:absolute;top:4px;left:50%;margin:0 0 0 -22px}
+.panel.dragging{opacity:.92;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+#tl{left:340px;right:150px;bottom:14px;padding:10px 14px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center}
+#tl .yr{display:flex;align-items:center;gap:10px}
+#bPlay{width:36px;height:36px;border-radius:50%;border:0;background:var(--btn-on);color:var(--btn-on-ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+#tl .ylab{font:600 13px/1.1 "Barlow Semi Condensed",sans-serif;color:var(--muted);min-width:62px}
+#tl .ylab b{display:block;font:600 22px/1 "Barlow",sans-serif;color:var(--ink)}
+#tl input[type=range]{margin:0}
+#tl .reads{grid-column:2;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;font-size:12.5px}
+#tl .reads span{padding-left:8px}
+#tl .reads .rcu{border-left:3px solid var(--cu)}#tl .reads .rau{border-left:3px solid var(--au)}
+#tl .legend{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12px;color:var(--muted)}
+#tl .legend i{width:11px;height:11px;border-radius:2px;display:inline-block;margin-left:6px}
+#tl .legend span:first-child{font-weight:600;color:var(--ink)}
+#tl .reads b{font:600 13px/1.3 "Barlow Semi Condensed",sans-serif}
+#insp{left:50%;bottom:118px;width:390px;margin-left:-195px;padding:12px 16px 12px;z-index:11}
+#insp[hidden]{display:none}
+#insp .chip{display:inline-block;font:600 11px/1 "Barlow Semi Condensed",sans-serif;padding:4px 7px;border-radius:4px;color:#fff;margin:0 0 6px}
+#insp h2{margin:0 0 4px;font:600 16px/1.2 "Barlow",system-ui,sans-serif;padding-right:24px}
+#insp p.b{margin:0;font-size:13px}
+#insp .x{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:6px;border:1px solid var(--rule);background:var(--btn);color:var(--ink);cursor:pointer;font:500 16px/1 "Barlow",sans-serif}
+#cubeWrap{position:fixed;z-index:12;right:14px;bottom:14px;width:120px;height:120px;border-radius:12px;background:var(--panel);border:1px solid var(--rule)}
+#cube{width:100%;height:100%;display:block;cursor:pointer;touch-action:none}
+#home{position:fixed;z-index:12;right:14px;bottom:142px;width:34px;height:34px;border-radius:8px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+#home:hover{border-color:var(--muted)}
+#cubeHint{position:fixed;z-index:12;right:56px;bottom:150px;font-size:11px;color:var(--muted);text-align:right;pointer-events:none}
+#veTag{position:absolute;left:50%;top:12px;transform:translateX(-50%);font:500 12px/1 "Barlow Semi Condensed",sans-serif;color:var(--muted);background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:5px 10px;pointer-events:none;z-index:9}
+#err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}
+@media (min-width:821px){#stage{position:fixed;inset:0}}
+@media (max-width:1180px) and (min-width:821px){#info{width:380px}#tl{left:340px;right:150px}}
+@media (max-width:820px){
+  .grip{display:none}
+  #cubeWrap{position:absolute;width:96px;height:96px;right:10px;bottom:10px}
+  #home{position:absolute;right:10px;bottom:112px}
+  #cubeHint{display:none}
+  body{height:auto}
+  #stage{height:62vh;min-height:360px}
+  .panel{position:relative;inset:auto !important;width:auto !important;max-height:none !important;margin:10px}
+  #insp{position:fixed !important;left:10px !important;right:10px !important;bottom:10px !important;margin:0;z-index:30}
+  #wrap{display:flex;flex-direction:column}
+  #head{order:-1}
+  #tl{grid-template-columns:1fr}
+  #tl .reads,#tl .legend{grid-column:1}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="panel" id="head">
+    <div class="brand"><span class="grip" data-i18n-title="drag" title="Drag to move" style="margin-top:-10px"></span><img src="data:image/png;base64,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" alt="Colorado School of Mines"></div>
+    <h1 data-i18n="title">Tailings strategy comparison</h1>
+    <p class="sub" data-i18n="sub"></p>
+    <p class="course">MNGN 581 - Fundamentals of Tailings Engineering I</p>
+    <dl class="meta">
+      <dt data-i18n="mAsg">Assignment</dt><dd data-i18n="mAsgV">Assignment 4</dd>
+      <dt data-i18n="mStu">Student</dt><dd>Marco Portal Valdivia</dd>
+      <dt data-i18n="mIns">Instructor</dt><dd>Dr. Heather Lammers</dd>
+    </dl>
+    <div class="langs" role="group" aria-label="Language">
+      <button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+
+  <div id="stage">
+    <canvas id="c" aria-label="3D model of an open pit with a tailings storage facility and an underground mine with paste backfill and a filtered stack"></canvas>
+    <div id="labels"></div>
+    <div id="veTag"></div>
+    <div id="cubeHint" data-i18n="cubeHint">Click a face or drag the cube</div>
+    <button id="home" data-i18n-title="home" title="Center model" aria-label="Center model"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></button>
+    <div id="cubeWrap"><canvas id="cube" aria-label="Orientation cube"></canvas></div>
+    <div id="err"><p>WebGL is not available in this browser, so the 3D model can't be shown.</p></div>
+  </div>
+
+  <div class="panel" id="ctrl">
+    <span class="grip" data-i18n-title="drag" title="Drag to move"></span>
+    <div class="group">
+      <p class="gt" data-i18n="gFocus">Go to</p>
+      <div class="focusgrid">
+        <button class="btn" data-view="both" aria-pressed="true"><span data-i18n="fBoth">Both sites</span></button>
+        <button class="btn" data-view="cu" aria-pressed="false"><i class="sw" style="background:var(--cu)"></i><span data-i18n="fCu">Chalco</span></button>
+        <button class="btn" data-view="au" aria-pressed="false"><i class="sw" style="background:var(--au)"></i><span data-i18n="fAu">Aurum</span></button>
+        <button class="btn" data-view="ug" aria-pressed="false"><i class="sw" style="background:var(--au)"></i><span data-i18n="fUg">Aurum stopes</span></button>
+        <button class="btn" data-view="tsf" aria-pressed="false"><i class="sw" style="background:var(--cu)"></i><span data-i18n="fTsf">Chalco TSF</span></button>
+        <button class="btn" data-view="plan" aria-pressed="false"><span data-i18n="vplan">Plan</span></button>
+      </div>
+    </div>
+    <div class="group">
+      <p class="gt" data-i18n="gShow">Show</p>
+      <label class="chk"><input type="checkbox" id="sCu" checked><i class="sw" style="background:var(--cu)"></i><span data-i18n="sCu">Project Chalco</span></label>
+      <label class="chk"><input type="checkbox" id="sAu" checked><i class="sw" style="background:var(--au)"></i><span data-i18n="sAu">Project Aurum</span></label>
+      <label class="chk"><input type="checkbox" id="sPipe" checked><i class="sw" style="background:var(--slurry)"></i><span data-i18n="sPipe">Pipelines and conveyor</span></label>
+      <label class="chk"><input type="checkbox" id="sWater" checked><i class="sw" style="background:var(--water)"></i><span data-i18n="sWater">Water infrastructure</span></label>
+      <label class="chk"><input type="checkbox" id="sUg" checked><i class="sw" style="background:var(--paste)"></i><span data-i18n="sUg">Underground workings</span></label>
+      <label class="chk"><input type="checkbox" id="sFlow" checked><span data-i18n="sFlow">Animate flows</span></label>
+    </div>
+    <div class="group">
+      <p class="gt" data-i18n="layers">Layers</p>
+      <label class="chk"><input type="checkbox" id="tTerrain" checked><span data-i18n="terrain">Topography</span></label>
+      <label class="chk"><input type="checkbox" id="tCut" checked><span data-i18n="cut">Cut away terrain over the Aurum mine</span></label>
+      <label class="chk"><input type="checkbox" id="tLabels" checked><span data-i18n="labels">Labels</span></label>
+      <label class="gt" for="op" style="display:block;margin-top:10px" data-i18n="opacity">Terrain opacity</label>
+      <input type="range" id="op" min="10" max="100" value="62">
+      <p class="gt" style="margin-top:12px" data-i18n="ve">Vertical exaggeration</p>
+      <div class="seg" id="veSeg"><button data-ve="1" aria-pressed="false">1×</button><button data-ve="2" aria-pressed="true">2×</button><button data-ve="3" aria-pressed="false">3×</button></div>
+    </div>
+    <div class="group">
+      <p class="gt ccu" data-i18n="gCuA">Chalco assumptions</p>
+      <div id="c_cu"></div>
+    </div>
+    <div class="group">
+      <p class="gt cau" data-i18n="gAuA">Aurum assumptions</p>
+      <div id="c_au"></div>
+    </div>
+    <div class="group">
+      <p class="help" data-i18n="help"></p>
+    </div>
+  </div>
+
+  <details class="panel" id="info" open>
+    <summary><span class="grip" data-i18n-title="drag" title="Drag to move"></span><span data-i18n="infoTitle">Engineering comparison</span></summary>
+    <div id="infobody">
+      <div class="seg" id="tabSeg">
+        <button data-tab="lab" aria-pressed="true" data-i18n="tLab">Lab data</button>
+        <button data-tab="dec" aria-pressed="false" data-i18n="tDec">Decisions</button>
+        <button data-tab="sec" aria-pressed="false" data-i18n="tSec">Sections</button>
+      </div>
+
+      <div class="tabp" id="tab_lab">
+        <table class="c" id="labT"></table>
+        <p class="gt" style="margin:14px 0 0" data-i18n="phTitle">Process pH and point of zero charge</p>
+        <div class="box" id="phBox"></div>
+        <p class="note" id="phNote"></p>
+      </div>
+
+      <div class="tabp" id="tab_dec" hidden>
+        <div id="decList"></div>
+        <div class="integ" id="integ"></div>
+        <div class="row" style="margin-top:10px"><button class="btn" id="bCopy" data-i18n="copy">Copy table</button></div>
+      </div>
+
+      <div class="tabp" id="tab_sec" hidden>
+        <div class="seg" id="secSeg" style="margin-top:10px">
+          <button data-sec="cu" aria-pressed="true" data-i18n="secCu">Chalco TSF</button>
+          <button data-sec="st" aria-pressed="false" data-i18n="secSt">Aurum stope</button>
+          <button data-sec="sk" aria-pressed="false" data-i18n="secSk">Aurum stack</button>
+        </div>
+        <div class="box" id="secBox"><canvas id="sec"></canvas></div>
+        <ol class="seclg" id="secLg"></ol>
+        <p class="note" id="secNote"></p>
+      </div>
+
+      <details class="assump">
+        <summary data-i18n="asT">Assumptions, limits and sources</summary>
+        <p data-i18n="as1"></p><p data-i18n="as2"></p><p data-i18n="as3"></p><p data-i18n="as4"></p><p data-i18n="as5"></p>
+      </details>
+    </div>
+  </details>
+
+  <div class="panel" id="tl">
+    <div class="yr">
+      <button id="bPlay" aria-label="Play life of mine"><svg id="icPlay" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg><svg id="icPause" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="display:none"><path d="M3 1.5h3v11H3zM8 1.5h3v11H8z" fill="currentColor"/></svg></button>
+      <div class="ylab"><span data-i18n="year">Year</span><b id="yOut">12</b></div>
+    </div>
+    <div><label class="gt" for="yr" style="display:block;margin:0 0 4px" data-i18n="lom">Life of mine (20 years)</label><input type="range" id="yr" min="0" max="20" step="0.1" value="12"></div>
+    <div class="reads"><span class="rcu" id="rCu"></span><span class="rau" id="rAu"></span></div>
+    <div class="legend" aria-hidden="false"><span data-i18n="lgSt">Stopes</span><i style="background:rgba(217,164,65,.45);border:1px solid #B8862A"></i><span data-i18n="lgU">unmined</span><i style="background:#E07B2A"></i><span data-i18n="lgM">mining</span><i style="background:#E3D3A2"></i><span data-i18n="lgF">filling with paste</span><i style="background:#8E8778"></i><span data-i18n="lgD">filled</span></div>
+  </div>
+
+  <div class="panel" id="insp" hidden role="dialog" aria-live="polite">
+    <button class="x" id="inspX" aria-label="Close">×</button>
+    <span class="chip" id="inspChip"></span>
+    <h2 id="inspT"></h2>
+    <p class="b" id="inspB"></p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const stage=document.getElementById('stage');
+if(!window.THREE||!(function(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl')||c.getContext('experimental-webgl'));}catch(e){return false;}})()){
+  document.getElementById('err').style.display='flex';return;
+}
+const T=THREE;
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- text ---------- */
+const TX={
+en:{title:"Tailings strategy comparison: Chalco vs Aurum",sub:"Prefeasibility tailings decisions for an open pit and an underground mine, built from the Table 1 laboratory data",
+mAsg:"Assignment",mAsgV:"Assignment 4",mStu:"Student",mIns:"Instructor",
+drag:"Drag to move",home:"Center model",cubeHint:"Click a face or drag the cube",fTop:"TOP",fBot:"BOTTOM",fN:"N",fS:"S",fE:"E",fW:"W",
+gFocus:"Go to",fBoth:"Both sites",fCu:"Chalco",fAu:"Aurum",fUg:"Aurum stopes",fTsf:"Chalco TSF",vplan:"Plan",
+gShow:"Show",sCu:"Project Chalco: open pit and TSF",sAu:"Project Aurum: underground and stack",sPipe:"Pipelines and conveyor",sWater:"Water infrastructure",sUg:"Underground workings",sFlow:"Animate flows",
+layers:"Layers",terrain:"Topography",cut:"Cut away terrain over the Aurum mine",labels:"Labels",opacity:"Terrain opacity",ve:"Vertical exaggeration",veTag:"Vertical scale ×{v}. Pipelines drawn oversize.",
+gCuA:"Chalco assumptions",gAuA:"Aurum assumptions",
+c_cuCw:"Thickener underflow solids",c_cuDD:"Deposited dry density",c_cuBS:"Average beach slope",
+c_auOD:"In-situ ore density",c_auFS:"Stope voids filled with paste",c_auBC:"Binder content",c_auSD:"Stack dry density (compacted)",
+help:"Drag to rotate. Right-drag or Shift-drag to pan. Scroll or pinch to zoom. Click any facility to see what it does and why. Drag the top bar of a panel to move it.",
+infoTitle:"Engineering comparison",tLab:"Lab data",tDec:"Decisions",tSec:"Sections",
+row:"Parameter",hCu:"Chalco",hAu:"Aurum",secLab:"Table 1, laboratory results",secDer:"Derived at current settings",secGeo:"Geochemical screening",
+l_rate:"Tailings production",l_sg:"Particle specific gravity",l_d50:"Median grain size, d₅₀",l_fin:"Fines, < 20 µm by mass",l_min:"Mineralogy (XRD)",l_ph:"Slurry pH, post-treatment",l_zeta:"Zeta potential at process pH",l_pzc:"Point of zero charge",l_cw:"Solids by weight",l_ty:"Yield stress (Herschel–Bulkley)",
+minCu:"55% quartz, 20% feldspar, 12% pyrite, 8% sericite, 5% chalcopyrite",minAu:"35% quartz, 28% pyrite/pyrrhotite, 18% illite/smectite, 12% calcite, 7% chlorite",
+thickSlurry:"thickened slurry",pasteFeed:"paste plant feed",
+d_ann:"Dry tailings per year",d_water:"Water leaving with tailings",d_rho:"Mixture density",d_cv:"Solids by volume",d_q:"Mixture flow",d_dph:"pH minus PZC",d_grad:"Yield-stress gradient, minimum",d_head:"Static head per 100 m vertical",
+d_vol:"Surface storage per year",d_lom:"Surface storage, 20 years",d_rise:"Average rate of rise",d_void:"Stope voids created per year",d_ug:"Tailings placed as paste fill",d_bind:"Binder per year",d_stackH:"Stack height at year 20",d_surf:"Tailings to surface",
+d_ap:"Acid potential, AP",d_np:"Neutralisation potential, NP",d_npr:"NPR = NP/AP",d_s:"Sulfide sulfur",likelyPAG:"likely PAG",strongPAG:"strongly PAG",
+gradCu:"600 mm line, at 55% only",gradAu:"150 mm line",perYr:"/yr",lomOver:"exceeds stack capacity",
+phTitle:"Process pH and point of zero charge",
+phNote:"Chalco runs 8.1 pH units above its PZC, so particles repel strongly and stay dispersed; it settles only with polymer flocculant. Aurum runs 0.4 units above its PZC, so particles coagulate into a network. Together with 68% fines and smectite, that explains the 140 Pa yield stress at 72% solids.",
+phPzc:"PZC",phProc:"process pH",
+copy:"Copy table",copied:"Copied",copyfail:"Select the text and copy it manually",show:"Show in model",req:"Required",add:"Added",
+secCu:"Chalco TSF",secSt:"Aurum stope",secSk:"Aurum stack",
+lgSt:"Aurum stopes:",lgU:"unmined",lgM:"being mined",lgF:"filling with paste",lgD:"filled",year:"Year",lom:"Life of mine, 20 years. Drag or press play.",play:"Play life of mine",pause:"Pause",
+rCu:"Chalco: <b>{v} Mm³</b> stored, crest <b>{c} m</b>, rising <b>{r} m/yr</b>",rAu:"Aurum: <b>{s}</b> stopes filled, stack <b>{h} m</b> high",
+siteCu:"Project Chalco",siteCuS:"Cu–Mo porphyry, open pit, 60,000 t/d",siteAu:"Project Aurum",siteAuS:"Orogenic gold, underground, 4,000 t/d",
+s_found:"Foundation",s_starter:"Starter dam",s_raise:"Centreline raises, cyclone sand",s_beach:"Beach, coarse to fine",s_pond:"Pond",s_phr:"Phreatic surface",s_toe:"Toe drain",s_seep:"Seepage collection",s_spig:"Spigot",s_cl:"Centreline",s_crest:"Crest {c} m",s_ve:"Vertical scale ×{v}",
+s_filled:"Filled stope",s_plug:"Plug pour, higher binder",s_main:"Main pour",s_unm:"Unmined stope",s_barr:"Barricade",s_drain:"Drainage",s_fill:"Fill line from borehole",s_upper:"Upper access drive",s_draw:"Drawpoint drive",s_ucs:"UCS tests to 180 days",
+s_liner:"Liner on prepared base",s_under:"Underdrain",s_lifts:"Compacted 5 m lifts",s_cover:"Closure cover, oxygen-limiting",s_ditch:"Perimeter channel",s_cpond:"Contact water pond",
+secNoteCu:"Half-section from the downstream toe to the pond at year {y}. Crest {c} m, average rate of rise {r} m/yr. Each raise moves the downstream slope outward while the crest centreline stays fixed.",
+secNoteSt:"Long-hole stope filled in two pours: a stronger plug at the base so the barricade can be loaded early, then the main pour. Binder {b}%. Sulfate attack from the 28% sulfides is the durability risk to test.",
+secNoteSk:"Filtered tailings not used underground, placed in compacted 5 m lifts on a lined base with underdrains. Height at year {y}: {h} m. Progressive encapsulation limits oxygen reaching the sulfides.",
+intTitle:"Integration",
+int1:"Chalco is governed by scale and hydraulics. It moves 15 times more solids than Aurum and about {qr} times more mixture volume, so the decisions that matter most are water recovery, reliable high-tonnage transport and the physical stability of a facility that grows to about {lom} Mm³.",
+int2:"Aurum is governed by rheology and chemistry. Its tailings already behave as a paste, so the system is built around paste fill tied to the stope cycle, with a filtered stack for the {surf}% the voids cannot take. Sulfides and residual cyanide make geochemistry, binder durability and water treatment the deciding issues.",
+concl:"PFS pathway: Chalco proceeds with high-rate thickening, slurry transport and a centreline-raised TSF, with filtration kept in the alternatives study. Aurum proceeds with cemented paste fill plus a filtered stack for surplus and contingency. Final selection rests on representative dewatering, rheology, geotechnical and geochemical testing. Aurum's data are assumed to represent final tailings after cyanide destruction.",
+asT:"Assumptions, limits and sources",
+as1:"Derived values: water = solids × (1 − Cw)/Cw; mixture density = 1/(Cw/SG + 1 − Cw); solids by volume = (Cw/SG) × density; minimum laminar pressure gradient = 4τy/D; static head = ρgh. Water density 1.0 t/m³, 365 operating days.",
+as2:"Chalco: 20-year life and a ring-dyke impoundment of about 6.1 km². Storage = annual tailings / deposited dry density. Beach, pond, 3 m freeboard and centreline raises are schematic. The yield stress was measured at 55% solids only and is not extrapolated.",
+as3:"Aurum: stope voids = ore tonnage / in-situ density (ore tonnage taken equal to tailings tonnage). Paste fill at the laboratory 72% solids with the chosen binder share; tailings not placed underground go to a filtered stack in 5 m lifts at 3H:1V overall. Mining sequence and stope size (40 × 30 × 20 m) are illustrative.",
+as4:"Geochemical screening: AP = 31.25 × %S. Pyrite 53.5% S, chalcopyrite 34.9% S, pyrrhotite about 38% S, so Aurum is shown as a range. NP assumes the 12% calcite is the only carbonate. Screening only; confirm with ABA, NAG and kinetic tests.",
+as5:"Layout, topography and dimensions are schematic, not to a real site. Raise method and consequence classification follow site conditions under GISTM, not tailings properties alone. Educational model, not a design tool."},
+es:{title:"Comparación de estrategias de relaves: Chalco vs Aurum",sub:"Decisiones de relaves a nivel de prefactibilidad para un tajo abierto y una mina subterránea, a partir de los datos de laboratorio de la Tabla 1",
+mAsg:"Tarea",mAsgV:"Tarea 4",mStu:"Estudiante",mIns:"Instructora",
+drag:"Arrastra para mover",home:"Centrar modelo",cubeHint:"Haz clic en una cara o arrastra el cubo",fTop:"ARRIBA",fBot:"ABAJO",fN:"N",fS:"S",fE:"E",fW:"O",
+gFocus:"Ir a",fBoth:"Ambos sitios",fCu:"Chalco",fAu:"Aurum",fUg:"Tajeos de Aurum",fTsf:"Depósito de Chalco",vplan:"Planta",
+gShow:"Mostrar",sCu:"Proyecto Chalco: tajo y depósito",sAu:"Proyecto Aurum: mina subterránea y pila",sPipe:"Tuberías y faja",sWater:"Infraestructura de agua",sUg:"Labores subterráneas",sFlow:"Animar flujos",
+layers:"Capas",terrain:"Topografía",cut:"Cortar el terreno sobre la mina Aurum",labels:"Etiquetas",opacity:"Opacidad del terreno",ve:"Exageración vertical",veTag:"Escala vertical ×{v}. Tuberías dibujadas sobredimensionadas.",
+gCuA:"Supuestos de Chalco",gAuA:"Supuestos de Aurum",
+c_cuCw:"Sólidos en la descarga del espesador",c_cuDD:"Densidad seca depositada",c_cuBS:"Pendiente media de playa",
+c_auOD:"Densidad in situ del mineral",c_auFS:"Vacíos de tajeo rellenados con pasta",c_auBC:"Contenido de ligante",c_auSD:"Densidad seca de la pila (compactada)",
+help:"Arrastra para girar. Clic derecho o Shift + arrastrar para desplazar. Rueda o pellizco para acercar. Haz clic en cualquier instalación para ver qué hace y por qué. Arrastra la barra superior de un panel para moverlo.",
+infoTitle:"Comparación de ingeniería",tLab:"Laboratorio",tDec:"Decisiones",tSec:"Secciones",
+row:"Parámetro",hCu:"Chalco",hAu:"Aurum",secLab:"Tabla 1, resultados de laboratorio",secDer:"Derivados con los valores actuales",secGeo:"Tamizaje geoquímico",
+l_rate:"Producción de relaves",l_sg:"Gravedad específica de partículas",l_d50:"Tamaño medio, d₅₀",l_fin:"Finos, < 20 µm en masa",l_min:"Mineralogía (DRX)",l_ph:"pH de la pulpa, post-tratamiento",l_zeta:"Potencial zeta al pH de proceso",l_pzc:"Punto de carga cero",l_cw:"Sólidos en peso",l_ty:"Esfuerzo de fluencia (Herschel–Bulkley)",
+minCu:"55% cuarzo, 20% feldespato, 12% pirita, 8% sericita, 5% calcopirita",minAu:"35% cuarzo, 28% pirita/pirrotita, 18% illita/esmectita, 12% calcita, 7% clorita",
+thickSlurry:"pulpa espesada",pasteFeed:"alimentación a planta de pasta",
+d_ann:"Relaves secos por año",d_water:"Agua que sale con el relave",d_rho:"Densidad de la mezcla",d_cv:"Sólidos en volumen",d_q:"Caudal de mezcla",d_dph:"pH menos PZC",d_grad:"Gradiente por fluencia, mínimo",d_head:"Carga estática por 100 m verticales",
+d_vol:"Almacenamiento superficial por año",d_lom:"Almacenamiento superficial, 20 años",d_rise:"Velocidad media de recrecimiento",d_void:"Vacíos de tajeo por año",d_ug:"Relave colocado como relleno en pasta",d_bind:"Ligante por año",d_stackH:"Altura de la pila al año 20",d_surf:"Relave a superficie",
+d_ap:"Potencial de acidez, AP",d_np:"Potencial de neutralización, NP",d_npr:"NPR = NP/AP",d_s:"Azufre sulfuro",likelyPAG:"probablemente PAG",strongPAG:"fuertemente PAG",
+gradCu:"línea de 600 mm, solo a 55%",gradAu:"línea de 150 mm",perYr:"/año",lomOver:"supera la capacidad de la pila",
+phTitle:"pH de proceso y punto de carga cero",
+phNote:"Chalco opera 8.1 unidades de pH por encima de su PZC: las partículas se repelen y la suspensión queda dispersa; solo sedimenta con floculante polimérico. Aurum opera 0.4 unidades por encima de su PZC: las partículas se coagulan en una red. Junto con el 68% de finos y la esmectita, eso explica los 140 Pa a 72% de sólidos.",
+phPzc:"PZC",phProc:"pH de proceso",
+copy:"Copiar tabla",copied:"Copiada",copyfail:"Selecciona el texto y cópialo manualmente",show:"Ver en el modelo",req:"Requerido",add:"Adicional",
+secCu:"Depósito Chalco",secSt:"Tajeo Aurum",secSk:"Pila Aurum",
+lgSt:"Tajeos de Aurum:",lgU:"sin explotar",lgM:"en minado",lgF:"rellenándose con pasta",lgD:"rellenado",year:"Año",lom:"Vida de la mina, 20 años. Arrastra o reproduce.",play:"Reproducir la vida de la mina",pause:"Pausar",
+rCu:"Chalco: <b>{v} Mm³</b> almacenados, cresta <b>{c} m</b>, sube <b>{r} m/año</b>",rAu:"Aurum: <b>{s}</b> tajeos rellenados, pila de <b>{h} m</b>",
+siteCu:"Proyecto Chalco",siteCuS:"Pórfido Cu–Mo, tajo abierto, 60 000 t/d",siteAu:"Proyecto Aurum",siteAuS:"Oro orogénico, subterráneo, 4 000 t/d",
+s_found:"Cimentación",s_starter:"Dique de arranque",s_raise:"Recrecimientos de eje central, arena cicloneada",s_beach:"Playa, de gruesos a finos",s_pond:"Laguna",s_phr:"Superficie freática",s_toe:"Dren de pie",s_seep:"Captación de filtraciones",s_spig:"Spigot",s_cl:"Eje central",s_crest:"Cresta {c} m",s_ve:"Escala vertical ×{v}",
+s_filled:"Tajeo rellenado",s_plug:"Vaciado tapón, más ligante",s_main:"Vaciado principal",s_unm:"Tajeo sin explotar",s_barr:"Barricada",s_drain:"Drenaje",s_fill:"Línea de relleno desde el sondaje",s_upper:"Galería superior de acceso",s_draw:"Galería de extracción",s_ucs:"Ensayos UCS hasta 180 días",
+s_liner:"Revestimiento sobre base preparada",s_under:"Subdrén",s_lifts:"Capas compactadas de 5 m",s_cover:"Cobertura de cierre, limita oxígeno",s_ditch:"Canal perimetral",s_cpond:"Poza de agua de contacto",
+secNoteCu:"Media sección desde el pie aguas abajo hasta la laguna en el año {y}. Cresta de {c} m, recrecimiento medio de {r} m/año. Cada recrecimiento desplaza el talud aguas abajo hacia afuera mientras el eje de la cresta se mantiene fijo.",
+secNoteSt:"Tajeo por taladros largos rellenado en dos vaciados: un tapón más resistente en la base para cargar pronto la barricada y luego el vaciado principal. Ligante {b}%. El ataque por sulfatos del 28% de sulfuros es el riesgo de durabilidad a ensayar.",
+secNoteSk:"Relave filtrado que no va a interior mina, colocado en capas compactadas de 5 m sobre una base revestida con subdrenes. Altura en el año {y}: {h} m. El encapsulamiento progresivo limita el oxígeno que llega a los sulfuros.",
+intTitle:"Integración",
+int1:"Chalco está gobernado por la escala y la hidráulica. Mueve 15 veces más sólidos que Aurum y unas {qr} veces más volumen de mezcla, así que las decisiones clave son la recuperación de agua, un transporte confiable de gran tonelaje y la estabilidad física de un depósito que crece hasta unos {lom} Mm³.",
+int2:"Aurum está gobernado por la reología y la química. Su relave ya se comporta como pasta, así que el sistema se construye alrededor del relleno en pasta ligado al ciclo de tajeos, con una pila filtrada para el {surf}% que los vacíos no pueden recibir. Los sulfuros y el cianuro residual hacen de la geoquímica, la durabilidad del ligante y el tratamiento de agua los temas decisivos.",
+concl:"Ruta de prefactibilidad: Chalco avanza con espesamiento de alta tasa, transporte de pulpa y un depósito con recrecimiento de eje central, manteniendo la filtración en el estudio de alternativas. Aurum avanza con relleno cementado en pasta más una pila filtrada para excedentes y contingencias. La selección final depende de ensayos representativos de desaguado, reología, geotecnia y geoquímica. Se asume que los datos de Aurum representan el relave final tras la destrucción de cianuro.",
+asT:"Supuestos, límites y fuentes",
+as1:"Valores derivados: agua = sólidos × (1 − Cw)/Cw; densidad de mezcla = 1/(Cw/GE + 1 − Cw); sólidos en volumen = (Cw/GE) × densidad; gradiente laminar mínimo = 4τy/D; carga estática = ρgh. Densidad del agua 1.0 t/m³, 365 días de operación.",
+as2:"Chalco: vida de 20 años y depósito de dique perimetral de unos 6.1 km². Almacenamiento = relave anual / densidad seca depositada. Playa, laguna, borde libre de 3 m y recrecimientos de eje central son esquemáticos. El esfuerzo de fluencia se midió solo a 55% de sólidos y no se extrapola.",
+as3:"Aurum: vacíos de tajeo = tonelaje de mineral / densidad in situ (tonelaje de mineral igual al de relaves). Relleno en pasta al 72% de sólidos del laboratorio con el ligante elegido; el relave que no va a interior mina se apila filtrado en capas de 5 m a 3H:1V global. La secuencia y el tamaño de tajeo (40 × 30 × 20 m) son ilustrativos.",
+as4:"Tamizaje geoquímico: AP = 31.25 × %S. Pirita 53.5% S, calcopirita 34.9% S, pirrotita cerca de 38% S, por eso Aurum se muestra como rango. El NP asume que el 12% de calcita es el único carbonato. Solo tamizaje; confirmar con ABA, NAG y ensayos cinéticos.",
+as5:"La disposición, la topografía y las dimensiones son esquemáticas, no de un sitio real. El método de recrecimiento y la clasificación de consecuencias dependen de las condiciones del sitio según GISTM, no solo de las propiedades del relave. Modelo educativo, no una herramienta de diseño."}};
+
+/* ---------- facility details (click to inspect) ---------- */
+const INFO={
+pit:{p:'cu',en:["Open pit","Cu–Mo open pit (schematic: about 1.5 km across and 480 m deep). There are no stopes, so tailings backfill is not a disposal route; in-pit disposal is possible only after mining frees the pit."],es:["Tajo abierto","Tajo de Cu–Mo (esquemático: unos 1.5 km de diámetro y 480 m de profundidad). No hay tajeos, así que el relleno con relaves no es una vía de disposición; la disposición en el tajo solo es posible cuando el minado lo libere."]},
+dump:{p:'cu',en:["Waste rock dump","Mine waste stored apart from the tailings. The host rock carries pyrite, so it needs the same acid–base testing as the tailings."],es:["Botadero de desmonte","Desmonte almacenado aparte de los relaves. La roca contiene pirita, así que requiere los mismos ensayos ácido–base que el relave."]},
+crush:{p:'cu',en:["Primary crusher","Run-of-mine ore from the pit feeds the crusher and then the HPGR circuit."],es:["Chancadora primaria","El mineral del tajo alimenta la chancadora y luego el circuito HPGR."]},
+plant:{p:'cu',en:["Concentrator: HPGR, ball mills and flotation","Produces 60,000 t/d of dry tailings at pH 10.5 (lime). d₅₀ 65 µm with 18% below 20 µm: coarse enough to settle readily and to cyclone sand for the embankment."],es:["Concentradora: HPGR, molinos de bolas y flotación","Produce 60 000 t/d de relaves secos a pH 10.5 (cal). d₅₀ de 65 µm con 18% bajo 20 µm: lo bastante grueso para sedimentar bien y ciclonear arena para el dique."]},
+thick:{p:'cu',en:["High-rate tailings thickeners","Reference dewatering: anionic flocculant to about 55% solids, with high-density thickening (60–65%) evaluated. ζ = −32 mV at pH 10.5, far from the PZC (2.4): a dispersed suspension that settles only through polymer bridging. Each extra 5% solids returns roughly 9,000 m³/d to the plant."],es:["Espesadores de alta tasa","Desaguado de referencia: floculante aniónico hasta cerca de 55% de sólidos, evaluando espesamiento de alta densidad (60–65%). ζ = −32 mV a pH 10.5, lejos del PZC (2.4): una suspensión dispersa que solo sedimenta por puenteo polimérico. Cada 5% adicional de sólidos devuelve unos 9 000 m³/d a la planta."]},
+pump:{p:'cu',en:["Slurry pump station","Centrifugal pumps in series with N+1 redundancy, flushing water and an emergency dump pond for outages."],es:["Estación de bombeo de pulpa","Bombas centrífugas en serie con redundancia N+1, agua de lavado y poza de emergencia para paradas."]},
+pipe:{p:'cu',en:["Slurry pipeline","Turbulent settling-slurry flow, about 2,900 m³/h at 55% solids. Velocity must stay above the deposition velocity across the PSD range. The low yield stress (15 Pa) means friction is turbulence-driven; wear and sanding govern design."],es:["Tubería de pulpa","Flujo turbulento de pulpa sedimentable, unos 2 900 m³/h a 55% de sólidos. La velocidad debe superar la velocidad de deposición en todo el rango granulométrico. Con un esfuerzo de fluencia bajo (15 Pa) la fricción la gobierna la turbulencia; el desgaste y el embancamiento definen el diseño."]},
+cyc:{p:'cu',en:["Cyclone station","Splits the coarse fraction to build the centreline raises; the fine overflow reports to the beach. A coarse, low-fines tailings (d₅₀ 65 µm) makes cyclone sand a realistic construction material, subject to sand-yield testing."],es:["Estación de ciclones","Separa la fracción gruesa para construir los recrecimientos de eje central; el rebose fino va a la playa. Un relave grueso y con pocos finos (d₅₀ 65 µm) hace viable la arena cicloneada, sujeto a ensayos de rendimiento de arena."]},
+dam:{p:'cu',en:["Centreline embankment, cyclone sand","Raised every year as the impoundment fills. Downstream slope moves outward, crest centreline stays fixed. Final raise method depends on foundation, seismicity and consequence assessment under GISTM; upstream raising is avoided."],es:["Dique de eje central, arena cicloneada","Se recrece cada año a medida que se llena el depósito. El talud aguas abajo avanza hacia afuera y el eje de la cresta queda fijo. El método final depende de la cimentación, la sismicidad y la evaluación de consecuencias según GISTM; se evita el método aguas arriba."]},
+beach:{p:'cu',en:["Tailings beach","Sub-aerial deposition from perimeter spigots. Coarse particles settle near the spigots (tan) and fines travel toward the pond (grey). Segregation helps drainage near the dam but leaves low-permeability zones; loose saturated zones are the liquefaction concern."],es:["Playa de relaves","Deposición subaérea desde spigots perimetrales. Las partículas gruesas se depositan cerca de los spigots (beige) y los finos avanzan hacia la laguna (gris). La segregación ayuda al drenaje junto al dique, pero deja zonas de baja permeabilidad; las zonas sueltas y saturadas son la preocupación por licuación."]},
+spig:{p:'cu',en:["Spigots, sequenced discharge","Discharge rotates between sectors (highlighted spigots are active) to build the beach evenly and keep the pond central, away from the embankment."],es:["Spigots, descarga secuenciada","La descarga rota entre sectores (los spigots resaltados están activos) para formar la playa de manera uniforme y mantener la laguna al centro, lejos del dique."]},
+pond:{p:'cu',en:["Supernatant pond and reclaim barge","Kept small and central. The barge pumps reclaim water back to the plant; pond position against the crest is a key monitoring item."],es:["Laguna y barcaza de recuperación","Pequeña y al centro. La barcaza bombea agua recuperada a la planta; la posición de la laguna respecto a la cresta es un control clave."]},
+ret:{p:'cu',en:["Return water pipeline","Reclaim water back to the concentrator. With lime Ca²⁺ and residual reagents, recycled water changes flocculation and flotation, so test with real process water."],es:["Tubería de agua de retorno","Agua recuperada hacia la concentradora. Con Ca²⁺ de la cal y reactivos residuales, el agua recirculada cambia la floculación y la flotación; ensayar con agua real de proceso."]},
+seep:{p:'cu',en:["Toe drain and seepage collection","Collects drainage from the embankment for return or treatment. Contact water can carry Cu, Mo and sulfate once lime alkalinity is spent."],es:["Dren de pie y captación de filtraciones","Recoge el drenaje del dique para retorno o tratamiento. El agua de contacto puede llevar Cu, Mo y sulfatos cuando se agote la alcalinidad de la cal."]},
+div:{p:'cu',en:["Clean water diversion","Keeps non-contact runoff out of the impoundment, which shrinks the water balance and the pond."],es:["Desvío de aguas limpias","Mantiene la escorrentía sin contacto fuera del depósito, lo que reduce el balance de agua y la laguna."]},
+piezo:{p:'cu',en:["Piezometers and deformation monitoring","Pore pressure, prisms or InSAR, pond position and seepage, each with trigger levels and preset responses (TARPs) in line with GISTM."],es:["Piezómetros y monitoreo de deformación","Presión de poros, prismas o InSAR, posición de laguna y filtraciones, cada uno con umbrales y respuestas predefinidas (TARP) según GISTM."]},
+mill:{p:'au',en:["Ultrafine grinding and cyanide leach","Grinds to d₈₀ 15 µm for gold liberation, then leaches with cyanide. Produces 4,000 t/d of dry tailings. Note that d₈₀ is the grind target and d₅₀ (12 µm) is the tailings median: different indicators."],es:["Molienda ultrafina y lixiviación con cianuro","Muele a d₈₀ de 15 µm para liberar el oro y lixivia con cianuro. Produce 4 000 t/d de relaves secos. El d₈₀ es la meta de molienda y el d₅₀ (12 µm) es la mediana del relave: indicadores distintos."]},
+cnd:{p:'au',en:["SO₂/air cyanide destruction","The lab results are taken to represent tailings after this step. Residual WAD cyanide, thiocyanate, cyanate and ammonia still need monitoring in water and fill."],es:["Destrucción de cianuro SO₂/aire","Se asume que los resultados de laboratorio representan el relave después de esta etapa. El cianuro WAD residual, tiocianato, cianato y amoníaco aún requieren monitoreo en el agua y el relleno."]},
+pthick:{p:'au',en:["Deep-cone paste thickener","pH 8.2 is close to the PZC (7.8, ζ = −8 mV), so particles are largely coagulated. With 68% below 20 µm and 18% illite/smectite this gives 140 Pa at 72% solids: the feed already behaves as a paste. Low-dose flocculant mainly aids densification."],es:["Espesador de pasta de cono profundo","El pH 8.2 está cerca del PZC (7.8, ζ = −8 mV), así que las partículas están mayormente coaguladas. Con 68% bajo 20 µm y 18% de illita/esmectita resultan 140 Pa a 72% de sólidos: la alimentación ya se comporta como pasta. El floculante en baja dosis ayuda sobre todo a densificar."]},
+filt:{p:'au',en:["Pressure filter plant","Dewaters the tailings that cannot go underground, for dry stacking. Clays limit filtration rate and cake dryness; the low tonnage (4,000 t/d) is what makes filtration affordable here."],es:["Planta de filtros a presión","Desagua el relave que no puede ir a interior mina, para apilamiento en seco. Las arcillas limitan la velocidad de filtración y la humedad del queque; el bajo tonelaje (4 000 t/d) es lo que hace asequible la filtración."]},
+bplant:{p:'au',en:["Paste fill plant and binder silos","Mixes paste with binder. The 28% pyrite/pyrrhotite can cause internal sulfate attack (gypsum and ettringite expansion), so test sulfate-resistant blends (slag, fly ash) and UCS to 180 days. Blending with sand or crushed aggregate is an option to test, not a given improvement."],es:["Planta de relleno en pasta y silos de ligante","Mezcla la pasta con ligante. El 28% de pirita/pirrotita puede provocar ataque interno por sulfatos (expansión por yeso y etringita), así que se ensayan mezclas resistentes (escoria, ceniza volante) y UCS hasta 180 días. La mezcla con arena o agregado chancado es una opción a ensayar, no una mejora asegurada."]},
+bh:{p:'au',en:["Paste borehole and reticulation","Gravity-assisted delivery with positive-displacement pumps on surface. Laminar plug flow: 140 Pa alone needs about 3.7 kPa/m in a 150 mm line, and a paste density of about 1.98 t/m³ adds about 1.9 MPa of static head per 100 m. Blockage and restart after shutdowns are the operating risks."],es:["Sondaje y red de distribución de pasta","Entrega asistida por gravedad con bombas de desplazamiento positivo en superficie. Flujo laminar tipo tapón: solo los 140 Pa exigen unos 3.7 kPa/m en una línea de 150 mm, y una densidad de pasta de unos 1.98 t/m³ suma cerca de 1.9 MPa de carga estática por 100 m. El bloqueo y el rearranque tras paradas son los riesgos operativos."]},
+portal:{p:'au',en:["Decline portal","Access for people, equipment and services. The decline spirals down beside the lode."],es:["Bocamina de la rampa","Acceso para personal, equipos y servicios. La rampa desciende en espiral junto a la veta."]},
+stopes:{p:'au',en:["Stopes and paste fill","Gold blocks are unmined; orange is being mined; light tan is filling with cemented paste; grey is filled. Fill is void-limited: only the volume mined can take paste, which caps the underground share of tailings."],es:["Tajeos y relleno en pasta","Los bloques dorados están sin explotar; el naranja se está minando; el beige claro se está rellenando con pasta cementada; el gris ya está rellenado. El relleno está limitado por los vacíos: solo el volumen minado puede recibir pasta, lo que limita la fracción de relave que va a interior mina."]},
+stack:{p:'au',en:["Filtered tailings stack","Surplus tailings in compacted 5 m lifts on a lined base with underdrains. No free water and better stability than a slurry facility, but PAG cake needs progressive encapsulation and an oxygen-limiting cover at closure."],es:["Pila de relaves filtrados","Relave excedente en capas compactadas de 5 m sobre una base revestida con subdrenes. Sin agua libre y más estable que un depósito de pulpa, pero el queque PAG requiere encapsulamiento progresivo y una cobertura que limite el oxígeno al cierre."]},
+conv:{p:'au',en:["Overland conveyor","Moves filter cake to the stack. Cake moisture must stay within the compaction window; off-spec cake goes to a contingency cell."],es:["Faja transportadora","Lleva el queque filtrado a la pila. La humedad del queque debe estar dentro de la ventana de compactación; el queque fuera de especificación va a una celda de contingencia."]},
+cpond:{p:'au',en:["Contact water pond","Collects stack runoff and underdrain flow. Expect sulfate, metals and cyanide species; nothing is released without treatment."],es:["Poza de agua de contacto","Recoge la escorrentía y el subdrenaje de la pila. Se esperan sulfatos, metales y especies de cianuro; nada se descarga sin tratamiento."]},
+wtp:{p:'au',en:["Water treatment plant","Treats contact water, filtrate and mine drainage before reuse in the plant or discharge. Small volume, complex chemistry."],es:["Planta de tratamiento de agua","Trata el agua de contacto, el filtrado y el drenaje de mina antes de reutilizarla o descargarla. Poco volumen, química compleja."]},
+lode:{p:'au',en:["Orogenic gold lode","Steeply dipping lode mined by long-hole open stoping (schematic). Tonnage mined per year sets the void volume available for paste fill."],es:["Veta de oro orogénico","Veta de alto buzamiento explotada por tajeos abiertos con taladros largos (esquemático). El tonelaje minado por año define el volumen de vacíos disponible para el relleno en pasta."]},
+decl:{p:'au',en:["Decline and level drives","Spiral decline with footwall drives on each sublevel. Fill lines run along the upper drives; drawpoints on the lower drives carry the barricades."],es:["Rampa y galerías de nivel","Rampa en espiral con galerías en la caja piso de cada subnivel. Las líneas de relleno van por las galerías superiores; los puntos de extracción de las galerías inferiores llevan las barricadas."]}
+};
+
+/* ---------- engineering decisions (table rows) ---------- */
+const DEC=[
+{id:'dew',r:1,t:{en:"Dewatering strategy and technology",es:"Estrategia y tecnología de desaguado"},hl:['thick','pthick','filt'],
+ cu:{en:"Reference: high-rate thickeners with anionic flocculant to about 55% solids, with high-density thickening (60–65%) tested against the water balance. The coarser PSD (d₅₀ 65 µm, 18% fines) settles readily. Full-stream filtration stays an alternative: unproven at 60,000 t/d.",es:"Referencia: espesadores de alta tasa con floculante aniónico hasta cerca de 55% de sólidos, ensayando espesamiento de alta densidad (60–65%) frente al balance de agua. La granulometría más gruesa (d₅₀ 65 µm, 18% de finos) sedimenta bien. La filtración total queda como alternativa: no está demostrada a 60 000 t/d."},
+ au:{en:"Reference: deep-cone paste thickening feeding the paste fill plant, plus pressure filtration for the surplus sent to surface. Ultrafine (d₅₀ 12 µm, 68% fines), clay-bearing (18% illite/smectite) tailings filter slowly; the low tonnage (4,000 t/d) makes filtration affordable.",es:"Referencia: espesamiento en pasta de cono profundo que alimenta la planta de relleno, más filtración a presión para el excedente que va a superficie. El relave ultrafino (d₅₀ 12 µm, 68% de finos) y arcilloso (18% illita/esmectita) filtra lento; el bajo tonelaje (4 000 t/d) hace asequible la filtración."}},
+{id:'tra',r:1,t:{en:"Transport system",es:"Sistema de transporte"},hl:['pipe','pump','bh','conv'],
+ cu:{en:"Centrifugal pumps on a rubber-lined steel or HDPE line in turbulent settling-slurry flow, about {cuQ} m³/h. Keep velocity above the deposition velocity across the PSD range. With 15 Pa, friction is turbulence-driven; wear, sanding and flushing govern design.",es:"Bombas centrífugas en una línea de acero revestido o HDPE, con flujo turbulento de pulpa sedimentable, unos {cuQ} m³/h. Velocidad por encima de la de deposición en todo el rango granulométrico. Con 15 Pa la fricción es turbulenta; el desgaste, el embancamiento y el lavado definen el diseño."},
+ au:{en:"Positive-displacement pumps on surface and gravity-assisted borehole delivery underground; conveyor for filter cake. Laminar plug flow: 140 Pa alone needs at least 3.7 kPa/m in a 150 mm line, and the paste adds about {head} MPa static head per 100 m. Plan for blockage and restart.",es:"Bombas de desplazamiento positivo en superficie y entrega por sondaje asistida por gravedad en interior mina; faja para el queque filtrado. Flujo laminar tapón: solo los 140 Pa exigen al menos 3.7 kPa/m en una línea de 150 mm, y la pasta suma unos {head} MPa de carga estática por 100 m. Prever bloqueos y rearranques."}},
+{id:'dep',r:1,t:{en:"Deposition strategy",es:"Estrategia de deposición"},hl:['beach','spig','pond','stopes','stack'],
+ cu:{en:"Sub-aerial spigot deposition from the perimeter in sequenced sectors, keeping the pond central and away from the embankment. Coarse particles settle near the spigots and fines travel to the pond. Beach slope from flume or field data, not one lab test.",es:"Deposición subaérea con spigots perimetrales por sectores secuenciados, manteniendo la laguna al centro y lejos del dique. Los gruesos se depositan cerca de los spigots y los finos van a la laguna. La pendiente de playa se define con canal o datos de campo, no con un solo ensayo."},
+ au:{en:"Underground first, as cemented paste fill. The surplus goes to a filtered stack in compacted 5 m lifts on a lined base. Paste does not segregate and bleeds little, but low permeability and clays slow strength gain.",es:"Primero a interior mina, como relleno cementado en pasta. El excedente va a una pila filtrada en capas compactadas de 5 m sobre base revestida. La pasta no segrega y casi no exuda, pero la baja permeabilidad y las arcillas retardan la ganancia de resistencia."}},
+{id:'bf',r:1,t:{en:"Backfill feasibility and blending",es:"Factibilidad del relleno y mezcla"},hl:['pit','bplant','stopes','bh'],
+ cu:{en:"Not a disposal route: an open pit has no stopes. In-pit disposal only once mining frees the pit. If underground mining is added later, cycloned sand could serve as hydraulic fill; whole tailings would need classification to form a stable paste.",es:"No es una vía de disposición: un tajo abierto no tiene tajeos. Disposición en el tajo solo cuando el minado lo libere. Si más adelante se agrega minería subterránea, la arena cicloneada podría servir como relleno hidráulico; el relave total requeriría clasificación para formar una pasta estable."},
+ au:{en:"Cemented paste fill at about {bc}% binder is the reference. Fill is void-limited: at current settings about {ug}% of tailings can go underground. 28% sulfides risk sulfate attack, so test slag or fly-ash blends and UCS to 180 days. Blend with sand or crushed aggregate only if tests show better rheology or strength.",es:"La referencia es relleno cementado en pasta con cerca de {bc}% de ligante. El relleno está limitado por los vacíos: con los valores actuales, cerca del {ug}% del relave puede ir a interior mina. El 28% de sulfuros implica riesgo de ataque por sulfatos, así que se ensayan mezclas con escoria o ceniza volante y UCS hasta 180 días. Mezclar con arena o agregado chancado solo si los ensayos muestran mejor reología o resistencia."}},
+{id:'ss',r:1,t:{en:"Surface storage",es:"Almacenamiento superficial"},hl:['dam','beach','stack'],
+ cu:{en:"Large thickened-slurry TSF: about {cuVol} Mm³/yr and {cuLom} Mm³ over 20 years, rising about {rise} m/yr. Centreline raises built with cyclone sand; the final method is set by foundation, seismicity and consequence assessment under GISTM. Upstream raising avoided.",es:"Depósito grande de pulpa espesada: unos {cuVol} Mm³/año y {cuLom} Mm³ en 20 años, con recrecimiento de unos {rise} m/año. Recrecimientos de eje central con arena cicloneada; el método final lo definen la cimentación, la sismicidad y la evaluación de consecuencias según GISTM. Se evita el método aguas arriba."},
+ au:{en:"Filtered stack for the {surf}% not used as fill, about {auVol} Mm³/yr. No free water and more stable than a slurry facility. Needs a liner, underdrains, compaction control and progressive encapsulation of PAG cake.",es:"Pila filtrada para el {surf}% que no va como relleno, unos {auVol} Mm³/año. Sin agua libre y más estable que un depósito de pulpa. Requiere revestimiento, subdrenes, control de compactación y encapsulamiento progresivo del queque PAG."}},
+{id:'risk',r:1,t:{en:"Primary geo-environmental risk",es:"Principal riesgo geoambiental"},hl:['beach','dam','seep','stack','stopes','cnd'],
+ cu:{en:"Acid drainage and metal release (Cu, Mo, SO₄²⁻) from a very large facility once lime alkalinity is spent: about 8% S gives AP ≈ 255 kg CaCO₃/t with no carbonate detected. The facility's scale magnifies the consequences of any physical instability.",es:"Drenaje ácido y liberación de metales (Cu, Mo, SO₄²⁻) desde un depósito muy grande, una vez agotada la alcalinidad de la cal: cerca de 8% de S da un AP ≈ 255 kg CaCO₃/t sin carbonatos detectados. La escala del depósito amplifica las consecuencias de cualquier inestabilidad física."},
+ au:{en:"Severe acid drainage plus residual cyanide species: 28% pyrite/pyrrhotite against 12% calcite gives NPR ≈ 0.3, and pyrrhotite reacts fast. Underground, sulfide oxidation also threatens fill durability and mine-water quality.",es:"Drenaje ácido severo más especies residuales de cianuro: 28% de pirita/pirrotita frente a 12% de calcita da un NPR ≈ 0.3, y la pirrotita reacciona rápido. En interior mina, la oxidación de sulfuros también amenaza la durabilidad del relleno y la calidad del agua de mina."}},
+{id:'flo',r:0,t:{en:"Flocculation and process-water chemistry",es:"Floculación y química del agua de proceso"},hl:['thick','pthick'],
+ cu:{en:"pH 10.5 is 8.1 units above the PZC (ζ = −32 mV): a dispersed, stable suspension that settles only through polymer bridging. Optimise dose, feed dilution and feedwell shear with recycled water, since lime Ca²⁺ and reagents change the response.",es:"El pH 10.5 está 8.1 unidades por encima del PZC (ζ = −32 mV): una suspensión dispersa y estable que solo sedimenta por puenteo polimérico. Optimizar dosis, dilución y cizalla en el feedwell con agua recirculada, porque el Ca²⁺ de la cal y los reactivos cambian la respuesta."},
+ au:{en:"pH 8.2 is only 0.4 units above the PZC (ζ = −8 mV): particles coagulate into a network, which with fines and smectite explains 140 Pa at 72% solids. Low-dose flocculant mainly aids densification. Do not shift pH toward the PZC without checking the cyanide circuit.",es:"El pH 8.2 está solo 0.4 unidades por encima del PZC (ζ = −8 mV): las partículas se coagulan en una red, lo que junto con los finos y la esmectita explica 140 Pa a 72% de sólidos. El floculante en baja dosis ayuda sobre todo a densificar. No mover el pH hacia el PZC sin revisar el circuito de cianuro."}},
+{id:'wat',r:0,t:{en:"Water infrastructure and management",es:"Infraestructura y gestión del agua"},hl:['pond','ret','seep','div','cpond','wtp'],
+ cu:{en:"In-plant recovery is the largest lever: about {cuW} m³/d leaves with the tailings at {cuCw}% solids. Reclaim barge and return line, clean-water diversion, toe drains and seepage collection, sized with a sitewide wet and dry water balance.",es:"La recuperación en planta es la palanca principal: unos {cuW} m³/d salen con el relave a {cuCw}% de sólidos. Barcaza y línea de retorno, desvío de aguas limpias, drenes de pie y captación de filtraciones, dimensionados con un balance de agua para escenarios húmedos y secos."},
+ au:{en:"Small volume (about 1,560 m³/d at 72%) but complex chemistry: cyanide-destruction residues (SCN⁻, OCN⁻, NH₃), filtrate, fill bleed and mine drainage. Contact water pond and treatment before reuse or discharge.",es:"Poco volumen (unos 1 560 m³/d a 72%) pero química compleja: residuos de la destrucción de cianuro (SCN⁻, OCN⁻, NH₃), filtrado, exudación del relleno y drenaje de mina. Poza de agua de contacto y tratamiento antes de reutilizar o descargar."}},
+{id:'geo',r:0,t:{en:"Geotechnical behaviour and physical stability",es:"Comportamiento geotécnico y estabilidad física"},hl:['dam','piezo','stack'],
+ cu:{en:"Loose, saturated beach sands and silts may be contractive, so static and seismic liquefaction is the main physical failure mode. CPTu, state parameter, consolidation and permeability testing; keep the rate of rise compatible with pore-pressure dissipation.",es:"Las arenas y limos sueltos y saturados de la playa pueden ser contractivos, así que la licuación estática o sísmica es el modo de falla física principal. CPTu, parámetro de estado, consolidación y permeabilidad; mantener una velocidad de recrecimiento compatible con la disipación de presión de poros."},
+ au:{en:"High fines and smectite mean low permeability, slow consolidation and retained pore pressure. Slurry yield stress (0.14 kPa) is not deposited shear strength. Set compaction and moisture criteria so the stack never forms saturated, contractive zones.",es:"El alto contenido de finos y la esmectita implican baja permeabilidad, consolidación lenta y presión de poros retenida. El esfuerzo de fluencia de la pulpa (0.14 kPa) no es la resistencia al corte del relave depositado. Fijar criterios de compactación y humedad para que la pila no forme zonas saturadas y contractivas."}},
+{id:'gch',r:0,t:{en:"Geochemical characterisation",es:"Caracterización geoquímica"},hl:['beach','dump','stack','cnd'],
+ cu:{en:"ABA, NAG, sulfur speciation, humidity cells and leach tests for each geometallurgical domain. The pH of 10.5 is lime alkalinity, not neutralising capacity. Waste rock needs the same programme.",es:"ABA, NAG, especiación de azufre, celdas húmedas y ensayos de lixiviación por dominio geometalúrgico. El pH de 10.5 es alcalinidad de la cal, no capacidad de neutralización. El desmonte requiere el mismo programa."},
+ au:{en:"The same programme plus free, WAD and total cyanide, thiocyanate and ammonia. Test binders with real process water. Watch for pyrrhotite self-heating in exposed cake or fill.",es:"El mismo programa más cianuro libre, WAD y total, tiocianato y amoníaco. Ensayar los ligantes con agua real de proceso. Vigilar el autocalentamiento de la pirrotita en queque o relleno expuestos."}},
+{id:'ops',r:0,t:{en:"Mine integration and operational reliability",es:"Integración minera y confiabilidad operativa"},hl:['pump','cyc','bplant','bh'],
+ cu:{en:"N+1 pumps, standby thickener capacity, emergency dump ponds and flushing at shutdowns. Surface capacity must take 100% of production in every year of the mine life.",es:"Bombas N+1, capacidad de espesamiento de respaldo, pozas de emergencia y lavado en las paradas. La capacidad superficial debe recibir el 100% de la producción en cada año de la vida de la mina."},
+ au:{en:"Size the paste plant to the stope cycle: filling rate, curing before exposure, barricade pressure. Keep stack capacity for plant outages or periods with no open stope.",es:"Dimensionar la planta de pasta según el ciclo de tajeos: velocidad de llenado, curado antes de la exposición, presión sobre barricadas. Mantener capacidad en la pila para paradas de planta o periodos sin tajeos disponibles."}},
+{id:'mon',r:0,t:{en:"Monitoring, closure and lifecycle",es:"Monitoreo, cierre y ciclo de vida"},hl:['piezo','dam','stack','wtp'],
+ cu:{en:"Monitor flow, density, line wear, pond position, piezometers, deformation and seepage with TARPs under GISTM. Close with an oxygen-limiting cover and plan for long-term water treatment.",es:"Monitorear caudal, densidad, desgaste de línea, posición de laguna, piezómetros, deformación y filtraciones con TARP según GISTM. Cerrar con una cobertura que limite el oxígeno y prever tratamiento de agua a largo plazo."},
+ au:{en:"Add cyanide species, paste line pressure, binder dose, fill UCS, barricades and fill temperature. Flooding at closure limits oxidation of the fill; the PAG stack needs an oxygen-limiting cover. Include binder cost (about {bind} kt/yr) in lifecycle economics.",es:"Agregar especies de cianuro, presión en líneas de pasta, dosis de ligante, UCS del relleno, barricadas y temperatura del relleno. La inundación al cierre limita la oxidación del relleno; la pila PAG necesita una cobertura que limite el oxígeno. Incluir el costo del ligante (unas {bind} kt/año) en la economía del ciclo de vida."}}
+];
+
+let lang='en';
+const t=k=>(TX[lang][k]??TX.en[k]??k);
+const nf=(x,d=0)=>Number.isFinite(x)?x.toLocaleString(lang==='es'?'es-PE':'en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'–';
+const fill=(s,o)=>s.replace(/\{(\w+)\}/g,(m,k)=>o[k]!==undefined?o[k]:m);
+
+/* ---------- parameters and sliders ---------- */
+const P={cuCw:55,cuDD:1.45,cuBS:0.6,auOD:3.1,auFS:90,auBC:5,auSD:1.6};
+const CTRL=[['cu','cuCw',50,70,1,'%',0],['cu','cuDD',1.30,1.65,0.01,'t/m³',2],['cu','cuBS',0.3,1.5,0.1,'%',1],
+ ['au','auOD',2.8,3.2,0.05,'t/m³',2],['au','auFS',50,100,5,'%',0],['au','auBC',3,8,0.5,'%',1],['au','auSD',1.45,1.8,0.05,'t/m³',2]];
+const outText=c=>nf(P[c[1]],c[6])+(c[5]?' '+c[5]:'');
+function buildControls(){
+ for(const c of CTRL){const [grp,id,mn,mx,st]=c;
+  const div=document.createElement('div');div.className='sl';
+  div.innerHTML=`<label for="r_${id}"><span data-i18n="c_${id}"></span><output id="o_${id}"></output></label><input type="range" id="r_${id}" min="${mn}" max="${mx}" step="${st}" value="${P[id]}">`;
+  document.getElementById('c_'+grp).appendChild(div);
+  const inp=div.querySelector('input'),out=div.querySelector('output');out.textContent=outText(c);
+  inp.addEventListener('input',()=>{P[id]=parseFloat(inp.value);out.textContent=outText(c);onParam(grp);});
+ }
+}
+
+/* ---------- engineering model ---------- */
+const LOM=20,TOTAL_DAYS=365;
+const TSF={cx:-3000,cz:1300,a:1400,b:1100,r:300};
+let PER=[],TSFA=0,LBAR=0;
+(function perimeter(){
+ const {cx,cz,a,b,r}=TSF,raw=[];
+ const corners=[[a-r,b-r,0],[-(a-r),b-r,Math.PI/2],[-(a-r),-(b-r),Math.PI],[a-r,-(b-r),1.5*Math.PI]];
+ for(const [ox,oz,a0] of corners)for(let i=0;i<=24;i++){const q=a0+i/24*Math.PI/2;raw.push([cx+ox+r*Math.cos(q),cz+oz+r*Math.sin(q)]);}
+ const cum=[0];for(let i=1;i<=raw.length;i++){const p=raw[i%raw.length],q=raw[i-1];cum.push(cum[i-1]+Math.hypot(p[0]-q[0],p[1]-q[1]));}
+ const L=cum[cum.length-1],N=240;let k=0;
+ for(let i=0;i<N;i++){const s=i/N*L;while(cum[k+1]<s)k++;const u=(s-cum[k])/(cum[k+1]-cum[k]);const p=raw[k],q=raw[(k+1)%raw.length];PER.push({x:p[0]+(q[0]-p[0])*u,z:p[1]+(q[1]-p[1])*u});}
+ for(let i=0;i<N;i++){const p=PER[i],a1=PER[(i+N-1)%N],b1=PER[(i+1)%N];let tx=b1.x-a1.x,tz=b1.z-a1.z;const l=Math.hypot(tx,tz);tx/=l;tz/=l;let nx=tz,nz=-tx;if(nx*(p.x-cx)+nz*(p.z-cz)<0){nx=-nx;nz=-nz;}p.nx=nx;p.nz=nz;}
+ let A=0;for(let i=0;i<N;i++){const p=PER[i],q=PER[(i+1)%N];A+=p.x*q.z-q.x*p.z;}TSFA=Math.abs(A)/2;
+ LBAR=PER.reduce((s,p)=>s+Math.hypot(p.x-cx,p.z-cz),0)/N;
+})();
+const nearPer=(x,z)=>{let bi=0,bd=1e18;PER.forEach((p,i)=>{const d=(p.x-x)**2+(p.z-z)**2;if(d<bd){bd=d;bi=i;}});return bi;};
+const iNE=nearPer(TSF.cx+TSF.a,TSF.cz-TSF.b),iS=nearPer(TSF.cx,TSF.cz+TSF.b),iN=nearPer(TSF.cx,TSF.cz-TSF.b);
+
+function mix(rate,cw,sg){const c=cw/100,rho=1/(c/sg+1-c);return {water:rate*(1-c)/c,rho,cv:(c/sg)*rho,q:(rate/c)/rho/24};}
+function model(){
+ const cu=mix(60000,P.cuCw,2.85),au=mix(4000,72,3.2);
+ const cuAnn=60000*TOTAL_DAYS,auAnn=4000*TOTAL_DAYS;
+ const cuVol=cuAnn/P.cuDD,rise=cuVol/TSFA;
+ const b=P.auBC/100,sgMix=1/((1-b)/3.2+b/3.0),rhoP=1/(0.72/sgMix+0.28),solids=0.72*rhoP;
+ const voids=auAnn/P.auOD,fillVol=voids*P.auFS/100;
+ const tUG=Math.min(auAnn,fillVol*solids*(1-b)),share=tUG/auAnn,bind=fillVol*solids*b;
+ const tSurf=auAnn-tUG,stackVol=tSurf/P.auSD;
+ return {cu,au,cuAnn,auAnn,cuVol,rise,voids,tUG,share,bind,tSurf,stackVol,rhoP,
+  cuS:12*0.535+5*0.349,auS:[28*0.38,28*0.535]};
+}
+let Mo=model();
+function tsfState(y){
+ const V=Mo.cuVol*y,Ht=V/TSFA,rise=P.cuBS/100*LBAR;
+ const hmin=Math.max(0.3,Ht-2/3*rise),hmax=Math.max(0.3,Ht+rise/3);
+ const crest=Math.max(12,Math.ceil((hmax+3)/2.5)*2.5);
+ return {V,Ht,rise,hmin,hmax,crest,pond:hmin+0.28*rise+0.4,has:Ht>0.4};
+}
+const STK={cx:4200,cz:300,w:700,d:500,lift:5,inset:15};
+function stackState(y){
+ let V=Mo.stackVol*y,k=0,H=0;const lifts=[];
+ while(V>0){const w=STK.w-2*STK.inset*k,d=STK.d-2*STK.inset*k;if(w<60||d<60){return {lifts,H,over:true};}
+  const full=w*d*STK.lift;const f=Math.min(1,V/full);lifts.push({w,d,h:STK.lift*f,y:H});H+=STK.lift*f;V-=full;k++;}
+ return {lifts,H,over:false};
+}
+
+/* ---------- terrain function ---------- */
+const PIT={x:-3900,z:-1400,R:760,D:480,bh:15,run:5.46,berm:9};
+PIT.step=PIT.run+PIT.berm;PIT.nb=Math.round(PIT.D/PIT.bh);PIT.rf=PIT.R-PIT.nb*PIT.step;
+const pitToe=r=>r<PIT.rf?-PIT.D:-PIT.D+PIT.bh*(r-PIT.rf)/PIT.step;
+const sm=(e0,e1,x)=>{const u=Math.min(1,Math.max(0,(x-e0)/(e1-e0)));return u*u*(3-2*u);};
+const sdRR=(x,z,o)=>{const qx=Math.abs(x-TSF.cx)-(TSF.a-TSF.r),qz=Math.abs(z-TSF.cz)-(TSF.b-TSF.r);return Math.hypot(Math.max(qx,0),Math.max(qz,0))+Math.min(Math.max(qx,qz),0)-TSF.r;};
+const sdBox=(x,z,cx,cz,hx,hz)=>{const qx=Math.abs(x-cx)-hx,qz=Math.abs(z-cz)-hz;return Math.hypot(Math.max(qx,0),Math.max(qz,0))+Math.min(Math.max(qx,qz),0);};
+const ZONES=[
+ (x,z)=>sm(PIT.R+60,PIT.R+460,Math.hypot(x-PIT.x,z-PIT.z)),
+ (x,z)=>sm(650,1100,Math.hypot(x+2350,z+1100)),
+ (x,z)=>sm(480,850,Math.hypot(x+5050,z+700)),
+ (x,z)=>sm(420,950,sdRR(x,z)),
+ (x,z)=>sm(700,1100,Math.hypot(x-1050,z+1200)),
+ (x,z)=>sm(900,1300,Math.hypot(x-2400,z+700)),
+ (x,z)=>sm(220,650,sdBox(x,z,STK.cx,STK.cz,STK.w/2,STK.d/2)),
+ (x,z)=>sm(260,520,Math.hypot(x-4800,z-620))
+];
+const HILLS=[[-1200,-2700,230,700,520],[700,2500,130,620,420],[-5200,2300,150,520,600],[5300,-2300,220,520,620],[300,300,55,520,520],[5200,2300,90,500,400],[-300,-1500,70,420,380]];
+function natural(x,z){
+ let h=10+12*Math.sin(x*0.0011+0.5)*Math.cos(z*0.0013)+7*Math.sin(x*0.0031+z*0.0023);
+ h+=330*sm(0,1,(-z-1900)/1500)*(0.65+0.35*Math.sin(x*0.0008+1));
+ for(const [hx,hz,a,sx,sz] of HILLS)h+=a*Math.exp(-((x-hx)**2/(2*sx*sx)+(z-hz)**2/(2*sz*sz)));
+ return Math.max(2,h);
+}
+function flatF(x,z){let f=1;for(const Z of ZONES){f=Math.min(f,Z(x,z));if(f<=0)break;}return f;}
+function gh(x,z){
+ const rp=Math.hypot(x-PIT.x,z-PIT.z);if(rp<PIT.R)return pitToe(rp)-6;
+ return natural(x,z)*flatF(x,z);
+}
+const lodeZ=y=>-900+y*0.2679;
+
+/* ---------- renderer / scene ---------- */
+const canvas=document.getElementById('c');
+const renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,logarithmicDepthBuffer:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.localClippingEnabled=true;
+const scene=new T.Scene();
+const camera=new T.PerspectiveCamera(36,1,1,120000);
+scene.add(new T.HemisphereLight(0xffffff,0x3a3c3e,0.7));
+const sun=new T.DirectionalLight(0xffffff,0.75);sun.position.set(-3000,6000,3000);scene.add(sun);
+const back=new T.DirectionalLight(0xffffff,0.3);back.position.set(3000,-1500,-4000);scene.add(back);
+const world=new T.Group();scene.add(world);
+const V=(x,y,z)=>new T.Vector3(x,y,z);
+const COL={water:'#3A86C6',slurry:'#8A7660',paste:'#C9AE74',cake:'#7E6B4E',sand:'#A99064',fines:'#6F736F',steel:'#9AA3A9',dark:'#3E4A52',conc:'#C4C0B6',rock:'#A39584',ore:'#D9A441',filled:'#8E8778',filling:'#F3E7C0',mining:'#E07B2A'};
+function grp(parent){const g=new T.Group();parent.add(g);return g;}
+const G={};
+G.cu=grp(world);G.cuP=grp(G.cu);G.cuW=grp(G.cu);G.au=grp(world);G.auP=grp(G.au);G.auW=grp(G.au);G.auU=grp(G.au);
+const D={cuTSF:grp(G.cu),cuP:grp(G.cuP),cuW:grp(G.cuW),auStack:grp(G.au),auP:grp(G.auP),auU:grp(G.auU)};
+const mat=(color,o={})=>new T.MeshStandardMaterial({color,roughness:.85,flatShading:true,...o});
+function add(parent,geo,color,k,o){const m=new T.Mesh(geo,mat(color,o));if(k)m.userData.k=k;parent.add(m);return m;}
+function box(parent,w,h,d,x,z,color,k,y0=0){const m=add(parent,new T.BoxGeometry(w,h,d),color,k);m.position.set(x,y0+h/2,z);return m;}
+function cyl(parent,r,h,x,z,color,k,y0=0,seg=28){const m=add(parent,new T.CylinderGeometry(r,r,h,seg),color,k);m.position.set(x,y0+h/2,z);return m;}
+function polyCurve(pts){const cp=new T.CurvePath();for(let i=0;i<pts.length-1;i++)if(pts[i].distanceTo(pts[i+1])>0.01)cp.add(new T.LineCurve3(pts[i],pts[i+1]));return cp;}
+function groundPts(xz,lift,step=40){const out=[];
+ for(let i=0;i<xz.length-1;i++){const [x0,z0]=xz[i],[x1,z1]=xz[i+1];const L=Math.hypot(x1-x0,z1-z0),n=Math.max(1,Math.ceil(L/step));
+  for(let k=0;k<n;k++){const u=k/n,x=x0+(x1-x0)*u,z=z0+(z1-z0)*u;out.push(V(x,Math.max(0,gh(x,z))+lift,z));}}
+ const [x,z]=xz[xz.length-1];out.push(V(x,Math.max(0,gh(x,z))+lift,z));return out;}
+function tube(parent,curve,r,color,k,o={}){const n=Math.max(8,Math.min(1200,Math.ceil(curve.getLength()/12)));return add(parent,new T.TubeGeometry(curve,n,r,8,false),color,k,{flatShading:false,...o});}
+function clearG(g){while(g.children.length){const c=g.children[g.children.length-1];g.remove(c);if(c.userData.keepMat)continue;c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());});}}
+class Helix extends T.Curve{constructor(cx,cz,R,y0,y1,loops){super();Object.assign(this,{cx,cz,R,y0,y1,loops});}
+ getPoint(u,tg=new T.Vector3()){const a=u*this.loops*Math.PI*2;return tg.set(this.cx+this.R*Math.cos(a),this.y0+(this.y1-this.y0)*u,this.cz+this.R*Math.sin(a));}}
+
+/* clipping window over the Aurum mine */
+const CLIP=[new T.Plane(new T.Vector3(-1,0,0),2900),new T.Plane(new T.Vector3(1,0,0),-1700),new T.Plane(new T.Vector3(0,0,-1),-1400),new T.Plane(new T.Vector3(0,0,1),350)];
+// clipped where x<2900, x>1700, z>-1400, z<-350 (all at once)
+CLIP[0].set(new T.Vector3(1,0,0),-2900);CLIP[1].set(new T.Vector3(-1,0,0),1950);CLIP[2].set(new T.Vector3(0,0,-1),-1400);CLIP[3].set(new T.Vector3(0,0,1),0);
+const terrainMat=new T.MeshStandardMaterial({vertexColors:true,flatShading:true,transparent:true,opacity:0.62,depthWrite:false,side:T.DoubleSide,roughness:1,clippingPlanes:CLIP,clipIntersection:true});
+let terrain=null;
+function buildTerrain(){
+ const xmin=-5900,xmax=5900,zmin=-3700,zmax=3300,W=xmax-xmin,Dz=zmax-zmin,segX=295,segZ=175;
+ const tg=new T.PlaneGeometry(W,Dz,segX,segZ);tg.rotateX(-Math.PI/2);tg.translate((xmin+xmax)/2,0,(zmin+zmax)/2);
+ const pos=tg.attributes.position,cols=[];
+ const low=new T.Color('#748350'),mid=new T.Color('#A08D63'),high=new T.Color('#ADA9A0'),pad=new T.Color('#C2BBAA'),pitc=new T.Color('#8E8276'),tmp=new T.Color();
+ for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),h=gh(x,z);pos.setY(i,h);
+  if(h<-1){tmp.copy(pitc);}else{const f=Math.min(1,Math.max(0,(h-5)/260));if(f<0.5)tmp.copy(low).lerp(mid,f*2);else tmp.copy(mid).lerp(high,(f-0.5)*2);
+   const ff=flatF(x,z);if(ff<0.35)tmp.lerp(pad,(0.35-ff)/0.35*0.8);
+   if(h>8&&Math.abs(h%50)<2.2)tmp.multiplyScalar(0.84);}
+  cols.push(tmp.r,tmp.g,tmp.b);}
+ tg.setAttribute('color',new T.Float32BufferAttribute(cols,3));tg.computeVertexNormals();
+ terrain=new T.Mesh(tg,terrainMat);terrain.renderOrder=5;world.add(terrain);
+}
+
+/* ---------- labels ---------- */
+const labelsEl=document.getElementById('labels');const LBL={};
+function setLabel(id,pos,group,cls,k,minR=11000){let L=LBL[id];if(!L){const el=document.createElement('div');labelsEl.appendChild(el);L=LBL[id]={el,id};}
+ const isNew=!L.k;Object.assign(L,{pos,group,k:k||id,minR});L.el.className='lbl '+(cls||'');if(isNew&&typeof lang!=='undefined')L.el.innerHTML=labelText(L);}
+function labelText(L){if(L.id==='siteCu')return `${t('siteCu')}<small>${t('siteCuS')}</small>`;if(L.id==='siteAu')return `${t('siteAu')}<small>${t('siteAuS')}</small>`;const I=INFO[L.k];return I?I[lang][0]:L.id;}
+function isVis(o){while(o){if(!o.visible)return false;o=o.parent;}return true;}
+let labelsOn=true;const pv=new T.Vector3();
+function updateLabels(){
+ const w=stage.clientWidth,h=stage.clientHeight;world.updateMatrixWorld();
+ const hot=HL.on?HL.keys:null,placed=[];
+ const list=Object.values(LBL).sort((a,b)=>((b.minR>1e8)-(a.minR>1e8))||((hot&&hot.has(b.k))-(hot&&hot.has(a.k))));
+ for(const L of list){
+  const isHot=hot&&hot.has(L.k);
+  if(!L.pos||!isVis(L.group)||(!labelsOn&&!isHot)||(!isHot&&cur.r>L.minR)){L.el.style.display='none';continue;}
+  pv.copy(L.pos).applyMatrix4(world.matrixWorld).project(camera);
+  if(pv.z>1||pv.z<-1||Math.abs(pv.x)>1.1||Math.abs(pv.y)>1.1){L.el.style.display='none';continue;}
+  const px=(pv.x*0.5+0.5)*w,py=(-pv.y*0.5+0.5)*h;
+  if(!L.w){L.el.style.display='';L.w=L.el.offsetWidth;L.h=L.el.offsetHeight;}
+  const rr=[px-L.w/2-2,py-L.h/2-2,px+L.w/2+2,py+L.h/2+2];
+  if(placed.some(q=>rr[0]<q[2]&&rr[2]>q[0]&&rr[1]<q[3]&&rr[3]>q[1])){L.el.style.display='none';continue;}
+  placed.push(rr);
+  L.el.style.display='';L.el.style.outline=isHot?'2px solid var(--hl)':'';L.el.style.zIndex=isHot?2:'';
+  L.el.style.transform=`translate(${px}px,${py}px) translate(-50%,-50%)`;
+ }
+}
+function refreshLabelText(){Object.values(LBL).forEach(L=>{L.el.innerHTML=labelText(L);L.w=0;});}
+
+/* ---------- flows (animated particles) ---------- */
+const FLOW={};const dummy=new T.Object3D();const sphereGeo=new T.SphereGeometry(1,8,6);
+function setFlow(id,parent,curve,color,r,spacing,speed){
+ let f=FLOW[id];
+ if(!f){const m=new T.InstancedMesh(sphereGeo,new T.MeshBasicMaterial({color}),600);m.userData.keepMat=true;m.frustumCulled=false;f=FLOW[id]={inst:m};}
+ if(f.inst.parent!==parent){if(f.inst.parent)f.inst.parent.remove(f.inst);parent.add(f.inst);}
+ f.curve=curve;f.len=curve.getLength();f.n=Math.min(600,Math.max(2,Math.ceil(f.len/spacing)));f.r=r;f.speed=speed;f.inst.count=f.n;
+}
+let flowT=0,VE=2;
+function updateFlows(){
+ for(const f of Object.values(FLOW)){if(!f.curve||!isVis(f.inst))continue;
+  for(let i=0;i<f.n;i++){const u=((flowT*f.speed/f.len)+i/f.n)%1;dummy.position.copy(f.curve.getPoint(u));dummy.scale.set(f.r,f.r/VE,f.r);dummy.updateMatrix();f.inst.setMatrixAt(i,dummy.matrix);}
+  f.inst.instanceMatrix.needsUpdate=true;}
+}
+/* keep pipe tubes from being removed with dynamic groups */
+
+/* ---------- static Chalco ---------- */
+function buildChalco(){
+ const g=G.cu;
+ // pit
+ const pr=[V(0,-PIT.D,0),V(PIT.rf,-PIT.D,0)];
+ for(let i=0;i<PIT.nb;i++){const r0=PIT.rf+i*PIT.step,y0=-PIT.D+i*PIT.bh;pr.push(V(r0+PIT.run,y0+PIT.bh,0));pr.push(V(Math.min(PIT.R,r0+PIT.step),y0+PIT.bh,0));}
+ const pit=add(g,new T.LatheGeometry(pr.map(p=>new T.Vector2(p.x,p.y)),120),COL.rock,'pit',{side:T.BackSide});pit.position.set(PIT.x,0,PIT.z);
+ const pl=add(g,new T.CircleGeometry(PIT.rf,48),'#7E7468','pit',{side:T.DoubleSide});pl.rotation.x=-Math.PI/2;pl.position.set(PIT.x,-PIT.D+0.5,PIT.z);
+ // waste dump
+ const dmp=add(g,new T.CylinderGeometry(250,430,110,28),'#8C7F70','dump');dmp.position.set(-5050,55,-700);
+ // haul road and crusher
+ tube(g,polyCurve(groundPts([[-3140,-1450],[-3000,-1500]],3)),6,'#6E6A64','crush');
+ box(g,40,26,40,-2985,-1500,'#9AA3A9','crush');
+ tube(g,polyCurve([V(-2965,20,-1490),V(-2805,30,-1340)]),3,'#59636A','crush');
+ // concentrator
+ box(g,110,35,60,-2750,-1330,'#B7BEC3','plant');box(g,170,45,85,-2540,-1300,'#AEB6BC','plant');
+ for(let i=0;i<8;i++)for(const z of [-1185,-1155])cyl(g,8,11,-2410+24*i,z,'#8B969D','plant',0,16);
+ // tailings thickeners
+ for(const x of [-2000,-1870]){cyl(g,45,7,x,-900,'#B9BFC3','thick');const top=add(g,new T.CircleGeometry(43,36),'#6C8B9C','thick',{side:T.DoubleSide});top.rotation.x=-Math.PI/2;top.position.set(x,7.2,-900);
+  box(g,92,3,5,x,-900,'#4E5A62','thick',8);cyl(g,4,6,x,-900,'#4E5A62','thick',8,12);}
+ tube(G.cuP,polyCurve([V(-2390,8,-1150),V(-2050,8,-1000),V(-1935,9,-900)]),4,COL.slurry,'thick');
+ setFlow('cuTails',G.cuP,polyCurve([V(-2390,10,-1150),V(-2050,10,-1000),V(-1935,11,-900)]),'#9C8366',6,40,90);
+ // pump station and emergency pond
+ box(G.cuP,40,14,26,-1935,-250,'#7E8A92','pump');
+ const ep=add(G.cuW,new T.CylinderGeometry(45,38,2,24),COL.water,'pump',{transparent:true,opacity:.85});ep.position.set(-1835,1,-215);
+ // clean-water diversion
+ const dv=[];for(let i=0;i<=PER.length;i++){const p=PER[i%PER.length];const x=p.x+p.nx*400,z=p.z+p.nz*400;dv.push(V(x,Math.max(0,gh(x,z))+2,z));}
+ tube(G.cuW,polyCurve(dv),6,COL.water,'div');
+ // labels
+ setLabel('siteCu',V(-3000,420,-650),G.cu,'site cu','siteCu',1e9);
+ setLabel('pit',V(PIT.x,60,PIT.z),G.cu,'cu');setLabel('dump',V(-5050,150,-700),G.cu,'cu');
+ setLabel('plant',V(-2560,110,-1310),G.cu,'cu');setLabel('thick',V(-1935,45,-900),G.cu,'cu');
+ setLabel('pump',V(-1935,50,-250),G.cuP,'cu');
+ const pw=PER[nearPer(TSF.cx-TSF.a,TSF.cz)];setLabel('div',V(pw.x+pw.nx*400,30,pw.z+pw.nz*400),G.cuW,'cu');
+}
+
+/* ---------- dynamic Chalco TSF ---------- */
+let SPIG=[];
+function embGeo(H){
+ const pos=[],N=PER.length,prof=[[-6-0.5*H,0],[-6,H],[6,H],[6+3*H,0]];
+ const pts=i=>{const p=PER[i%N];return prof.map(([n,y])=>[p.x+p.nx*(10+n),y,p.z+p.nz*(10+n)]);};
+ for(let i=0;i<N;i++){const A=pts(i),B=pts(i+1);for(let s=0;s<3;s++){pos.push(...A[s],...A[s+1],...B[s+1],...A[s],...B[s+1],...B[s]);}}
+ const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.computeVertexNormals();return g;
+}
+function polarGeo(u0,u1,K,hf,cf){
+ const N=PER.length,pos=[],col=[],idx=[],c=new T.Color();
+ for(let k=0;k<=K;k++){const u=u0+(u1-u0)*k/K;for(let j=0;j<N;j++){const p=PER[j];const x=TSF.cx+u*(p.x-TSF.cx),z=TSF.cz+u*(p.z-TSF.cz);pos.push(x,hf(u),z);if(cf){cf(u,c);col.push(c.r,c.g,c.b);}}}
+ for(let k=0;k<K;k++)for(let j=0;j<N;j++){const a=k*N+j,b=k*N+(j+1)%N,c2=(k+1)*N+j,d=(k+1)*N+(j+1)%N;idx.push(a,c2,b,b,c2,d);}
+ const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));if(cf)g.setAttribute('color',new T.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();return g;
+}
+function rebuildTSF(){
+ clearG(D.cuTSF);clearG(D.cuP);clearG(D.cuW);SPIG=[];
+ const S=tsfState(YEAR),H=S.crest,N=PER.length;
+ add(D.cuTSF,embGeo(H),'#B49B6C','dam',{side:T.DoubleSide});
+ const sandC=new T.Color(COL.sand),fineC=new T.Color(COL.fines);
+ const bh=u=>S.hmin+S.rise*u;
+ if(S.has){
+  const be=new T.Mesh(polarGeo(0,1,22,bh,(u,c)=>c.copy(fineC).lerp(sandC,Math.pow(u,1.6))),mat('#ffffff',{vertexColors:true,side:T.DoubleSide}));be.userData.k='beach';D.cuTSF.add(be);
+  const pd=new T.Mesh(polarGeo(0,0.34,5,()=>S.pond),mat(COL.water,{transparent:true,opacity:.88,flatShading:false,side:T.DoubleSide}));pd.userData.k='pond';D.cuTSF.add(pd);
+  box(D.cuTSF,30,4,16,TSF.cx,TSF.cz,'#D6DADD','pond',S.pond);
+  for(let i=0;i<N;i+=6){const p=PER[i];const m=add(D.cuTSF,new T.CylinderGeometry(2.6,2.6,34,8),'#6F777C','spig');
+   m.quaternion.setFromUnitVectors(V(0,1,0),V(p.nx,0,p.nz));m.position.set(p.x+p.nx*(4-17),H+1.5,p.z+p.nz*(4-17));SPIG.push({m,sec:Math.floor(i/(N/4))});}
+ }
+ // cyclone station
+ const pc=PER[iNE],cx=pc.x+pc.nx*10,cz=pc.z+pc.nz*10;
+ box(D.cuTSF,42,10,26,cx,cz,'#8D979E','cyc',H);
+ for(let k=-1;k<=1;k++){const cn=add(D.cuTSF,new T.ConeGeometry(4.5,10,12),'#5E6A72','cyc');cn.rotation.x=Math.PI;cn.position.set(cx+k*12,H+16,cz);}
+ // piezometers
+ for(let i=10;i<N;i+=24){const p=PER[i];cyl(D.cuTSF,2.4,12,p.x+p.nx*13,p.z+p.nz*13,'#2F3A41','piezo',H,8);}
+ // toe drain and seepage pond (south side)
+ const toe=10+6+3*H,ps=PER[iS],td=[];
+ for(let i=iS-34;i<=iS+34;i++){const p=PER[(i+N)%N];td.push(V(p.x+p.nx*(toe-10),2,p.z+p.nz*(toe-10)));}
+ tube(D.cuW,polyCurve(td),3.5,'#5D676E','seep');
+ const sx=ps.x+ps.nx*(toe+95),sz=ps.z+ps.nz*(toe+95);
+ const sp=add(D.cuW,new T.CylinderGeometry(70,58,2,28),COL.water,'seep',{transparent:true,opacity:.88});sp.position.set(sx,1,sz);
+ tube(D.cuW,polyCurve([V(ps.x+ps.nx*(toe-10),2,ps.z+ps.nz*(toe-10)),V(sx,2,sz-ps.nz*60)]),2.5,COL.water,'seep');
+ // slurry line: thickeners -> pump -> toe -> crest at cyclone
+ const tp=V(pc.x+pc.nx*(toe+30),3,pc.z+pc.nz*(toe+30)),crestP=V(cx,H+4,cz);
+ const main=[...groundPts([[-1935,-840],[-1935,-250],[tp.x,tp.z]],4,60),V(pc.x+pc.nx*(toe-4),5,pc.z+pc.nz*(toe-4)),V(pc.x+pc.nx*16,H+4,pc.z+pc.nz*16),crestP];
+ const mc=polyCurve(main);tube(D.cuP,mc,7,COL.slurry,'pipe');
+ setFlow('cuSlurry',D.cuP,mc,'#A8916F',10,55,180);
+ // spigot header along the crest
+ const hdr=[];for(let i=0;i<=N;i++){const p=PER[(iNE+i)%N];hdr.push(V(p.x+p.nx*4,H+3,p.z+p.nz*4));}
+ const hc=polyCurve(hdr);tube(D.cuP,hc,4,'#6F777C','spig');
+ setFlow('cuHeader',D.cuP,hc,'#B39C78',6,70,140);
+ // return water: barge -> north crest -> plant
+ if(S.has){const pn=PER[iN],ret=[];for(const u of [0,0.3,0.5,0.7,0.85,0.97])ret.push(V(TSF.cx+u*(pn.x-TSF.cx),bh(u)+3,TSF.cz+u*(pn.z-TSF.cz)));
+  ret.push(V(pn.x+pn.nx*10,H+3,pn.z+pn.nz*10));ret.push(V(pn.x+pn.nx*(toe+20),3,pn.z+pn.nz*(toe+20)));
+  ret.push(...groundPts([[pn.x+pn.nx*(toe+60),pn.z+pn.nz*(toe+60)],[-2350,-600],[-2470,-1240]],4,60));
+  const rc=polyCurve(ret);tube(D.cuW,rc,5,COL.water,'ret');setFlow('cuReturn',D.cuW,rc,'#5AA6E0',8,60,150);
+ }else{if(FLOW.cuReturn){FLOW.cuReturn.curve=null;FLOW.cuReturn.inst.count=0;}}
+ // labels
+ setLabel('cyc',V(cx,H+40,cz),G.cu,'cu');
+ const pd2=PER[iS];setLabel('dam',V(pd2.x+pd2.nx*30,H+30,pd2.z+pd2.nz*30),G.cu,'cu');
+ const pb=PER[nearPer(TSF.cx-TSF.a,TSF.cz)];setLabel('beach',S.has?V(TSF.cx+0.6*(pb.x-TSF.cx),bh(0.6)+30,TSF.cz+0.6*(pb.z-TSF.cz)):null,G.cu,'cu');
+ setLabel('pond',S.has?V(TSF.cx,S.pond+40,TSF.cz):null,G.cu,'cu');
+ setLabel('seep',V(sx,30,sz),G.cuW,'cu');
+ const pp=PER[nearPer(TSF.cx+TSF.a,TSF.cz)];setLabel('piezo',V(pp.x+pp.nx*13,H+34,pp.z+pp.nz*13),G.cu,'cu');
+ setLabel('pipe',V((tp.x+(-1935))/2,40,(tp.z+(-250))/2),G.cuP,'cu');
+ setLabel('ret',S.has?V(-2600,40,-480):null,G.cuW,'cu');
+ const psg=PER[(iNE+30)%N];setLabel('spig',S.has?V(psg.x,H+34,psg.z):null,G.cu,'cu');
+}
+
+/* ---------- Aurum ---------- */
+const ST=[];const STW=40,STH=30;
+for(let j=0;j<27;j++)for(let i=0;i<15;i++){const y=-115-STH*j;ST.push({i,j,x:2120+STW*i,y,z:lodeZ(y)});}
+const ORDER=(()=>{const co=[7,6,8,5,9,4,10,3,11,2,12,1,13,0,14],o=[];
+ for(let k=0;k<14;k++)for(const lv of [26-k,12-k])if(lv>=0)for(const i of co)o.push(ST[lv*15+i]);return o;})();
+ORDER.forEach((s,r)=>s.rank=r);
+const dipQ=new T.Quaternion().setFromAxisAngle(V(1,0,0),0.2618);
+let stSolid,stUnm,stFill,stEdge;
+function buildAurum(){
+ const g=G.au;
+ box(g,140,40,60,650,-1300,'#B3BAC0','mill');
+ for(let i=0;i<6;i++)cyl(g,10,18,790+24*i,-1480,'#97A2A9','mill',0,20);
+ cyl(g,10,14,1050,-1500,'#7F9AA8','cnd',0,20);box(g,26,10,18,1082,-1515,'#9AA3A9','cnd');
+ tube(G.auP,polyCurve([V(925,8,-1480),V(1040,8,-1500)]),3,COL.slurry,'cnd');tube(G.auP,polyCurve([V(1060,8,-1490),V(1245,8,-1205)]),3,COL.slurry,'pthick');
+ setFlow('auDetox',G.auP,polyCurve([V(1060,10,-1490),V(1245,10,-1205)]),'#A8916F',4,22,40);
+ // deep cone paste thickener
+ cyl(g,10,13,1250,-1200,'#B9BFC3','pthick',18);const cone=add(g,new T.ConeGeometry(10,13,24),'#A6AEB3','pthick');cone.rotation.x=Math.PI;cone.position.set(1250,11.5,-1200);
+ for(const [a,b] of [[-8,-8],[8,-8],[-8,8],[8,8]])box(g,1.8,18,1.8,1250+a,-1200+b,'#4E5A62','pthick');
+ box(g,70,30,45,1150,-900,'#AEB6BC','filt');
+ box(g,45,25,28,1500,-1150,'#A8B0B6','bplant');cyl(g,6,32,1540,-1195,'#D2D5D7','bplant',0,16);cyl(g,6,32,1560,-1176,'#D2D5D7','bplant',0,16);
+ const tf=polyCurve([V(1245,14,-1195),V(1170,14,-1000),V(1155,14,-925)]);tube(G.auP,tf,3,COL.paste,'filt');setFlow('auToFilt',G.auP,tf,'#BFA36A',4,18,40);
+ const tp2=polyCurve([V(1262,14,-1198),V(1480,14,-1158)]);tube(G.auP,tp2,3,COL.paste,'bplant');setFlow('auToPlant',G.auP,tp2,'#BFA36A',4,18,40);
+ // portal
+ box(g,32,14,26,1885,-560,'#8A949B','portal');
+ // water: contact pond, treatment, return
+ const cp=add(G.auW,new T.CylinderGeometry(95,80,2,30),COL.water,'cpond',{transparent:true,opacity:.88});cp.position.set(4760,1,780);
+ box(G.auW,60,14,40,4880,420,'#9FA8AE','wtp');
+ const wr=polyCurve(groundPts([[4760,700],[4880,440],[3800,470],[1450,420],[1450,-700],[720,-1270]],4,60));tube(G.auW,wr,4,COL.water,'wtp');
+ setFlow('auWater',G.auW,wr,'#5AA6E0',6,70,110);
+ const ch=[];for(const [x,z] of [[-1,-1],[1,-1],[1,1],[-1,1],[-1,-1]])ch.push(V(STK.cx+x*(STK.w/2+35),2,STK.cz+z*(STK.d/2+35)));
+ tube(G.auW,polyCurve(ch),3,COL.water,'cpond');
+ tube(G.auW,polyCurve([V(STK.cx+STK.w/2+35,2,STK.cz+STK.d/2+35),V(4700,2,740)]),2.5,COL.water,'cpond');
+ // conveyor to stack toe
+ const cvp=groundPts([[1150,-878],[1500,-300],[1600,250],[3820,STK.cz]],9,60);tube(G.auP,polyCurve(cvp),4,'#6B747A','conv');
+ // underground: lode, stopes, decline, drives
+ const lode=add(G.auU,new T.BoxGeometry(600,838,20),COL.ore,'lode',{transparent:true,opacity:.16,depthWrite:false});lode.quaternion.copy(dipQ);lode.position.set(2400,-505,lodeZ(-505));
+ const sg=new T.BoxGeometry(STW-2,STH-1.5,20);
+ stSolid=new T.InstancedMesh(sg,mat('#ffffff'),ST.length);stSolid.userData.k='stopes';G.auU.add(stSolid);
+ stUnm=new T.InstancedMesh(sg,mat('#E2B03C',{transparent:true,opacity:.42,depthWrite:false}),ST.length);stUnm.userData.k='stopes';G.auU.add(stUnm);
+ stFill=add(G.auU,new T.BoxGeometry(STW-1,1,21),COL.filling,'stopes',{emissive:new T.Color('#5A4A20'),emissiveIntensity:.6});stFill.quaternion.copy(dipQ);stFill.visible=false;
+ stEdge=new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(STW-1,STH-1,21)),new T.LineBasicMaterial({color:'#E07B2A'}));stEdge.quaternion.copy(dipQ);stEdge.visible=false;G.auU.add(stEdge);
+ const c0=new T.Color('#ffffff');for(let i=0;i<ST.length;i++)stSolid.setColorAt(i,c0);
+ const hx=new Helix(1820,-560,60,0,-930,930/54);tube(G.auU,hx,3.5,'#6B747A','decl');
+ const lp=[];for(let j=0;j<=27;j++){const y=-100-STH*j,zf=lodeZ(y)+32;lp.push(1880,y,-560, 2050,y,zf, 2050,y,zf, 2760,y,zf);}
+ const lg=new T.BufferGeometry();lg.setAttribute('position',new T.Float32BufferAttribute(lp,3));
+ const ln=new T.LineSegments(lg,new T.LineBasicMaterial({color:'#7C868C'}));ln.userData.k='decl';G.auU.add(ln);
+ setLabel('siteAu',V(2500,420,-1150),G.au,'site au','siteAu',1e9);
+ setLabel('mill',V(650,80,-1300),G.au,'au');setLabel('cnd',V(1050,150,-1500),G.au,'au');setLabel('pthick',V(1250,100,-1200),G.au,'au');
+ setLabel('filt',V(1150,60,-900),G.au,'au');setLabel('bplant',V(1530,190,-1170),G.au,'au');setLabel('portal',V(1885,40,-560),G.au,'au');
+ setLabel('cpond',V(4760,30,780),G.auW,'au');setLabel('wtp',V(4880,45,420),G.auW,'au');setLabel('conv',V(2700,40,280),G.auP,'au');
+ setLabel('lode',V(2730,-160,lodeZ(-160)),G.auU,'au','lode',9000);setLabel('decl',V(1820,-300,-560),G.auU,'au','decl',9000);
+}
+let fillTarget=null;
+function updateStopes(){
+ const n=Math.round(YEAR/LOM*ST.length),c=new T.Color(),hide=new T.Matrix4().makeScale(0,0,0),mx=new T.Matrix4();
+ ST.forEach((s,idx)=>{mx.compose(V(s.x,s.y,s.z),dipQ,V(1,1,1));
+  let st;if(s.rank<n-3)st='filled';else if(s.rank<n)st='filling';else if(s.rank<n+2)st='mining';else st='unm';
+  s.st=st;
+  if(n>0&&s===ORDER[n-1]){stSolid.setMatrixAt(idx,hide);stUnm.setMatrixAt(idx,hide);}
+  else if(st==='unm'){stSolid.setMatrixAt(idx,hide);stUnm.setMatrixAt(idx,mx);}
+  else{stUnm.setMatrixAt(idx,hide);stSolid.setMatrixAt(idx,mx);c.set(st==='filled'?COL.filled:st==='filling'?COL.filling:COL.mining);stSolid.setColorAt(idx,c);}
+ });
+ stSolid.instanceMatrix.needsUpdate=true;stUnm.instanceMatrix.needsUpdate=true;if(stSolid.instanceColor)stSolid.instanceColor.needsUpdate=true;
+ fillTarget=n>0?ORDER[n-1]:null;
+ stFill.visible=stEdge.visible=!!fillTarget;
+ if(fillTarget){stEdge.position.set(fillTarget.x,fillTarget.y,fillTarget.z);}
+}
+const UPV=V(0,Math.cos(0.2618),Math.sin(0.2618));
+function animFill(){if(!fillTarget)return;const H0=STH-1.5,f=0.12+0.86*((flowT*0.07)%1),hh=H0*f;
+ stFill.scale.set(1,hh,1);stFill.position.set(fillTarget.x,fillTarget.y,fillTarget.z).addScaledVector(UPV,-H0/2+hh/2);}
+function rebuildAuDyn(){
+ clearG(D.auStack);clearG(D.auP);clearG(D.auU);
+ const S=stackState(YEAR);
+ add(D.auStack,new T.BoxGeometry(STK.w+50,0.8,STK.d+50),'#2F3438','stack').position.set(STK.cx,0.4,STK.cz);
+ S.lifts.forEach((L,k)=>{if(L.h<0.05)return;const m=add(D.auStack,new T.BoxGeometry(L.w,L.h,L.d),k%2?'#9A907E':'#A79D8A','stack');m.position.set(STK.cx,0.8+L.y+L.h/2,STK.cz);});
+ const top=0.8+S.H;
+ const inc=polyCurve([V(3820,9,STK.cz),V(STK.cx-STK.w/2+20,top*0.5+9,STK.cz),V(STK.cx-60,top+6,STK.cz)]);tube(D.auP,inc,4,'#6B747A','conv');
+ const cake=polyCurve([...groundPts([[1150,-878],[1500,-300],[1600,250],[3820,STK.cz]],13,60),V(STK.cx-STK.w/2+20,top*0.5+13,STK.cz),V(STK.cx-60,top+10,STK.cz)]);
+ setFlow('auCake',G.auP,cake,'#8C7752',6,45,70);
+ setLabel('stack',V(STK.cx,top+40,STK.cz),G.au,'au');
+ // paste reticulation to the most recent stope
+ if(fillTarget){const s=fillTarget,yt=s.y+STH/2,zf=lodeZ(yt)+32;
+  const path=[V(1500,26,-1150),V(1590,3,-1100),V(1590,yt+2,-1100),V(2050,yt+2,zf),V(s.x,yt+2,zf),V(s.x,yt-2,lodeZ(yt-2))];
+  const pc=polyCurve(path);tube(D.auU,pc,4,'#59636A','bh');setFlow('auPaste',D.auU,pc,COL.paste,6,30,55);
+  setLabel('bh',V(1590,(yt)*0.5,-1100),G.auU,'au','bh',9000);setLabel('stopes',V(s.x,s.y+STH,s.z+30),G.auU,'au','stopes',9000);
+ }else{if(FLOW.auPaste){FLOW.auPaste.curve=null;FLOW.auPaste.inst.count=0;}setLabel('bh',null,G.auU,'au');setLabel('stopes',null,G.auU,'au');}
+}
+
+/* ---------- year / timeline ---------- */
+let YEAR=12,playing=false,lastBuiltYear=-1;
+function setYear(y,force){YEAR=Math.max(0,Math.min(LOM,y));document.getElementById('yr').value=YEAR;document.getElementById('yOut').textContent=nf(YEAR,YEAR%1?1:0);
+ if(force||Math.abs(YEAR-lastBuiltYear)>=0.049){lastBuiltYear=YEAR;rebuildTSF();updateStopes();rebuildAuDyn();applyVisibility();readouts();if(TAB==='sec')drawSection();}}
+function readouts(){const S=tsfState(YEAR),K=stackState(YEAR);const filled=ST.filter(s=>s.st==='filled'||s.st==='filling').length;
+ document.getElementById('rCu').innerHTML=fill(t('rCu'),{v:nf(S.V/1e6,0),c:nf(S.crest,1),r:nf(Mo.rise,1)});
+ document.getElementById('rAu').innerHTML=fill(t('rAu'),{s:nf(filled),h:nf(K.H,0)});}
+
+/* ---------- 2D panels: lab table, pH strip, decisions ---------- */
+let TAB='lab',SEC='cu';
+function vals(){const S20=tsfState(LOM),K20=stackState(LOM);
+ return {cuQ:nf(Mo.cu.q,0),head:nf(Mo.au.rho*0.981,1),bc:nf(P.auBC,1),ug:nf(Mo.share*100,0),surf:nf((1-Mo.share)*100,0),cuVol:nf(Mo.cuVol/1e6,1),cuLom:nf(Mo.cuVol*LOM/1e6,0),rise:nf(Mo.rise,1),
+  auVol:nf(Mo.stackVol/1e6,2),cuW:nf(Mo.cu.water,0),cuCw:nf(P.cuCw,0),bind:nf(Mo.bind/1000,0),qr:nf(Mo.cu.q/Mo.au.q,0),lom:nf(Mo.cuVol*LOM/1e6,0),S20,K20};}
+function renderLab(){
+ const v=vals(),cu=Mo.cu,au=Mo.au;
+ const R=(k,a,b,cls='n')=>`<tr><td>${t(k)}</td><td class="${cls}">${a}</td><td class="${cls}">${b}</td></tr>`;
+ const sec=k=>`<tr class="sect"><td colspan="3">${t(k)}</td></tr>`;
+ const apAu=Mo.auS.map(s=>31.25*s),apCu=31.25*Mo.cuS;
+ let h=`<thead><tr><th>${t('row')}</th><th class="ccu">${t('hCu')}</th><th class="cau">${t('hAu')}</th></tr></thead><tbody>`;
+ h+=sec('secLab')+R('l_rate','60,000 t/d'.replace(',',lang==='es'?' ':','),'4,000 t/d'.replace(',',lang==='es'?' ':','))+R('l_sg','2.85','3.20')+R('l_d50','65 µm','12 µm<small>d₈₀ grind 15 µm</small>')+R('l_fin','18%','68%')
+  +R('l_min',t('minCu'),t('minAu'),'min')+R('l_ph','10.5','8.2')+R('l_zeta','−32 mV','−8 mV')+R('l_pzc','pH 2.4','pH 7.8')
+  +R('l_cw',`55%<small>${t('thickSlurry')}</small>`,`72%<small>${t('pasteFeed')}</small>`)+R('l_ty','15 Pa','140 Pa');
+ h+=sec('secDer')+R('d_ann',nf(Mo.cuAnn/1e6,1)+' Mt',nf(Mo.auAnn/1e6,2)+' Mt')
+  +R('d_water',nf(cu.water,0)+' m³/d<small>'+nf(P.cuCw,0)+'%</small>',nf(au.water,0)+' m³/d')
+  +R('d_rho',nf(cu.rho,2)+' t/m³',nf(au.rho,2)+' t/m³')+R('d_cv',nf(cu.cv*100,1)+'%',nf(au.cv*100,1)+'%')
+  +R('d_q',nf(cu.q,0)+' m³/h',nf(au.q,0)+' m³/h')+R('d_dph','+'+nf(8.1,1),'+'+nf(0.4,1))
+  +R('d_grad',`${nf(4*15/0.6/1000,2)} kPa/m<small>${t('gradCu')}</small>`,`${nf(4*140/0.15/1000,1)} kPa/m<small>${t('gradAu')}</small>`)
+  +R('d_head',nf(cu.rho*0.981,2)+' MPa',nf(au.rho*0.981,2)+' MPa')
+  +R('d_void','–',nf(Mo.voids/1e6,2)+' Mm³')+R('d_ug','–',`${nf(Mo.tUG/1e6,2)} Mt<small>${nf(Mo.share*100,0)}%</small>`)
+  +R('d_surf',`${nf(Mo.cuAnn/1e6,1)} Mt<small>100%</small>`,`${nf(Mo.tSurf/1e6,2)} Mt<small>${nf((1-Mo.share)*100,0)}%</small>`)
+  +R('d_bind','–',nf(Mo.bind/1000,0)+' kt')
+  +R('d_vol',nf(Mo.cuVol/1e6,1)+' Mm³',nf(Mo.stackVol/1e6,2)+' Mm³')+R('d_lom',nf(Mo.cuVol*LOM/1e6,0)+' Mm³',nf(Mo.stackVol*LOM/1e6,1)+' Mm³')
+  +R('d_rise',nf(Mo.rise,1)+' m'+t('perYr'),'–')+R('d_stackH','–',v.K20.over?t('lomOver'):nf(v.K20.H,0)+' m');
+ h+=sec('secGeo')+R('d_s',nf(Mo.cuS,1)+'%',nf(Mo.auS[0],1)+'–'+nf(Mo.auS[1],1)+'%')
+  +R('d_ap',nf(apCu,0)+'<small>kg CaCO₃/t</small>',nf(apAu[0],0)+'–'+nf(apAu[1],0)+'<small>kg CaCO₃/t</small>')
+  +R('d_np','≈ 0','≈ 120')+R('d_npr',`≈ 0<small>${t('likelyPAG')}</small>`,`${nf(120/apAu[1],2)}–${nf(120/apAu[0],2)}<small>${t('strongPAG')}</small>`);
+ document.getElementById('labT').innerHTML=h+'</tbody>';
+ // pH strip
+ const X=p=>22+p*(356/14),cs=getComputedStyle(document.documentElement),c=n=>cs.getPropertyValue(n).trim();
+ let s=`<svg viewBox="0 0 400 104" role="img" aria-label="${t('phTitle')}">`;
+ s+=`<line x1="22" y1="82" x2="378" y2="82" stroke="${c('--muted')}" stroke-width="1"/>`;
+ for(let p=0;p<=14;p+=2)s+=`<line x1="${X(p)}" y1="79" x2="${X(p)}" y2="85" stroke="${c('--muted')}"/><text x="${X(p)}" y="98" font-size="10" text-anchor="middle" fill="${c('--muted')}" font-family="Barlow Semi Condensed,sans-serif">${p}</text>`;
+ const row=(y,pz,ph,col,name,d)=>`<line x1="${X(pz)}" y1="${y}" x2="${X(ph)}" y2="${y}" stroke="${col}" stroke-width="6" stroke-linecap="round" opacity=".35"/>`
+  +`<circle cx="${X(pz)}" cy="${y}" r="5" fill="${c('--panel-solid')}" stroke="${col}" stroke-width="2"/><circle cx="${X(ph)}" cy="${y}" r="5" fill="${col}"/>`
+  +`<text x="${X(pz)}" y="${y-9}" font-size="10" text-anchor="${pz<4?'start':'end'}" fill="${c('--muted')}" font-family="Barlow Semi Condensed,sans-serif">${t('phPzc')} ${nf(pz,1)}</text>`
+  +`<text x="${X(ph)+(pz<4?0:9)}" y="${y-9}" font-size="10" text-anchor="${pz<4?'middle':'start'}" fill="${c('--ink')}" font-family="Barlow Semi Condensed,sans-serif">${t('phProc')} ${nf(ph,1)}</text>`
+  +`<text x="396" y="${y+4}" font-size="11" text-anchor="end" fill="${col}" font-weight="600" font-family="Barlow,sans-serif">${name} Δ${nf(d,1)}</text>`;
+ s+=row(30,2.4,10.5,c('--cu'),t('hCu'),8.1)+row(62,7.8,8.2,c('--au'),t('hAu'),0.4)+'</svg>';
+ document.getElementById('phBox').innerHTML=s;document.getElementById('phNote').textContent=t('phNote');
+}
+function renderDec(){
+ const v=vals();let h='';
+ for(const d of DEC){h+=`<div class="dec"><h3><span>${d.t[lang]}</span><span class="req">${t(d.r?'req':'add')}</span></h3>`
+  +`<p class="pcu"><b class="ccu">${t('hCu')}</b>${fill(d.cu[lang],v)}</p><p class="pau"><b class="cau">${t('hAu')}</b>${fill(d.au[lang],v)}</p>`
+  +`<button class="show" data-dec="${d.id}">${t('show')}</button></div>`;}
+ document.getElementById('decList').innerHTML=h;
+ document.getElementById('integ').innerHTML=`<h3>${t('intTitle')}</h3><p>${fill(t('int1'),v)}</p><p>${fill(t('int2'),v)}</p><p>${fill(t('concl'),v)}</p>`;
+ document.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click',()=>{const d=DEC.find(x=>x.id===b.dataset.dec);flash(d.hl);}));
+}
+function decTSV(){const v=vals();const rows=[[lang==='es'?'Decisión de ingeniería':'Engineering decision',lang==='es'?'Proyecto Chalco':'Project Chalco',lang==='es'?'Proyecto Aurum':'Project Aurum']];
+ DEC.forEach(d=>rows.push([d.t[lang],fill(d.cu[lang],v),fill(d.au[lang],v)]));
+ return rows.map(r=>r.join('\t')).join('\n')+'\n\n'+[t('int1'),t('int2'),t('concl')].map(s=>fill(s,v)).join('\n\n');}
+function refresh2D(){renderLab();renderDec();readouts();if(TAB==='sec')drawSection();}
+
+/* ---------- section drawings ---------- */
+function drawSection(){
+ const cv=document.getElementById('sec'),bx=document.getElementById('secBox');
+ const w=bx.clientWidth-12,h=bx.clientHeight-12;if(w<60||h<60)return;
+ const dpr=Math.min(window.devicePixelRatio||1,2);cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+ const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+ const cs=getComputedStyle(document.documentElement),C=n=>cs.getPropertyValue(n).trim();
+ const ink=C('--ink'),muted=C('--muted'),water=C('--water'),rule=C('--rule'),hl=C('--hl');
+ const txt=(s,x,y,al='left',col=ink,wt=500,sz=11)=>{g.font=`${wt} ${sz}px "Barlow Semi Condensed",Barlow,sans-serif`;g.fillStyle=col;g.textAlign=al;g.textBaseline='middle';g.fillText(s,x,y);};
+ const poly=(pts,fillc,stroke,lw=1)=>{g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.closePath();if(fillc){g.fillStyle=fillc;g.fill();}if(stroke){g.strokeStyle=stroke;g.lineWidth=lw;g.stroke();}};
+ const arrow=(x0,y0,x1,y1,col)=>{g.strokeStyle=col;g.fillStyle=col;g.lineWidth=1.5;g.setLineDash([]);g.beginPath();g.moveTo(x0,y0);g.lineTo(x1,y1);g.stroke();const a=Math.atan2(y1-y0,x1-x0);g.beginPath();g.moveTo(x1,y1);g.lineTo(x1-7*Math.cos(a-0.4),y1-7*Math.sin(a-0.4));g.lineTo(x1-7*Math.cos(a+0.4),y1-7*Math.sin(a+0.4));g.closePath();g.fill();};
+ const marks=[];const mark=(key,x,y)=>{marks.push(key);const n=marks.length;g.beginPath();g.arc(x,y,8,0,7);g.fillStyle=ink;g.fill();g.strokeStyle=C('--panel-solid');g.lineWidth=1.5;g.stroke();txt(String(n),x,y+0.5,'center',C('--panel-solid'),600,10);};
+ const note=document.getElementById('secNote');
+ if(SEC==='cu'){
+  const S=tsfState(YEAR),H=S.crest,b=TSF.b,Hs=Math.max(H,30);
+  const xmin=-(16+3*Hs)-110,xmax=520,pl=8,pr=8,Y0=h-34,Ytop=40;
+  const sx=(w-pl-pr)/(xmax-xmin),sy=(Y0-Ytop)/(Hs+6);
+  const X=x=>pl+(x-xmin)*sx,Y=y=>Y0-y*sy;
+  g.fillStyle=rule;g.fillRect(0,Y0,w,12);g.strokeStyle=muted;g.lineWidth=1;g.beginPath();g.moveTo(0,Y0);g.lineTo(w,Y0);g.stroke();
+  const bh=x=>{const u=Math.min(1,Math.max(0,1-(x-10)/b));return S.hmin+S.rise*u;};
+  if(S.has){const pts=[[X(-4),Y(0)]];for(let x=-4;x<=xmax;x+=8)pts.push([X(x),Y(Math.max(0,bh(Math.max(10,x))))]);pts.push([X(xmax),Y(0)]);
+   const gr=g.createLinearGradient(X(10),0,X(xmax),0);gr.addColorStop(0,COL.sand);gr.addColorStop(1,'#8F8A7C');poly(pts,gr);
+   g.strokeStyle=water;g.lineWidth=1.8;g.setLineDash([5,4]);g.beginPath();g.moveTo(X(xmax),Y(S.pond*0.62));
+   g.quadraticCurveTo(X(200),Y(S.pond*0.5),X(10),Y(0.36*H));g.quadraticCurveTo(X(-6-1.2*H),Y(0.18*H),X(-6-2.6*H),Y(1.5));g.stroke();g.setLineDash([]);
+   arrow(X(xmax-170),Y(bh(xmax))-16,X(xmax)-3,Y(bh(xmax))-16,water);txt(t('s_pond')+' ≈ '+nf(b-xmax+10)+' m',X(xmax)-4,Y(bh(xmax))-29,'right',water,600);}
+  poly([[X(-6-3*H),Y(0)],[X(-6),Y(H)],[X(6),Y(H)],[X(6+0.5*H),Y(0)]],'#C2A878','#8C7A5A');
+  g.strokeStyle='rgba(90,75,50,.5)';g.lineWidth=1;for(let yy=17;yy<H-1;yy+=5){g.beginPath();g.moveTo(X(-6-3*(H-yy)),Y(yy));g.lineTo(X(6+0.5*(H-yy)),Y(yy));g.stroke();}
+  poly([[X(-42),Y(0)],[X(-6),Y(12)],[X(6),Y(12)],[X(30),Y(0)]],'#8A7E6A','#6E6354');
+  g.strokeStyle=ink;g.setLineDash([3,3]);g.beginPath();g.moveTo(X(0),Y(0));g.lineTo(X(0),Y(H+4));g.stroke();g.setLineDash([]);
+  txt(fill(t('s_crest'),{c:nf(H,1)}),X(0),Y(H+4)-10,'center',ink,600);
+  const td0=-6-2.9*H,td1=-6-2.4*H;poly([[X(td0),Y(0)],[X(td0),Y(2.5)],[X(td1),Y(2.5)],[X(td1),Y(0)]],'#4A545B');
+  const sk0=-(16+3*H)-95,sk1=-(16+3*H)-45;poly([[X(sk0),Y0],[X(sk0+6),Y0+8],[X(sk1-6),Y0+8],[X(sk1),Y0]],water);arrow(X(td0),Y0-3,X(sk1)+3,Y0-3,water);
+  if(S.has)arrow(X(8),Y(H)-4,X(80),Y(bh(80))-5,hl);
+  mark('s_starter',X(-14),Y(5));mark('s_raise',X(-6-1.6*H),Y(H*0.5));mark('s_cl',X(0)+12,Y(H*0.75));
+  if(S.has){mark('s_spig',X(92),Y(bh(92))-14);mark('s_beach',X(300),Y(bh(300))-14);mark('s_phr',X(160),Y(S.pond*0.48));}
+  mark('s_toe',X((td0+td1)/2),Y(2.5)-12);mark('s_seep',X((sk0+sk1)/2),Y0+20);
+  txt(t('s_found')+'. '+fill(t('s_ve'),{v:nf(sy/sx,0)}),w-8,Y0+20,'right',muted,500,10);
+  note.textContent=fill(t('secNoteCu'),{y:nf(YEAR,YEAR%1?1:0),c:nf(H,1),r:nf(Mo.rise,1)});
+ }else if(SEC==='st'){
+  const xmin=-6,xmax=141,ymin=-12,ymax=42,s=Math.min((w-16)/(xmax-xmin),(h-24)/(ymax-ymin));
+  const ox=(w-(xmax-xmin)*s)/2,X=x=>ox+(x-xmin)*s,Y=y=>h-14-(y-ymin)*s;
+  g.fillStyle='rgba(120,110,100,.18)';g.fillRect(X(xmin),Y(ymax),(xmax-xmin)*s,(ymax-ymin)*s);
+  const rect=(x0,y0,x1,y1,c,st)=>poly([[X(x0),Y(y0)],[X(x1),Y(y0)],[X(x1),Y(y1)],[X(x0),Y(y1)]],c,st);
+  rect(-6,-7,141,-1,C('--panel-solid'),muted);rect(-6,31,141,37,C('--panel-solid'),muted);
+  rect(5,0,45,30,COL.filled,'#6B665C');rect(50,0,90,30,C('--panel-solid'),muted);rect(50,0,90,4,'#9C8250');rect(50,4,90,20,COL.filling,'#B9A777');
+  rect(95,0,135,30,'rgba(226,176,60,.5)','#B8862A');
+  g.strokeStyle='#59636A';g.lineWidth=3;g.beginPath();g.moveTo(X(-6),Y(34));g.lineTo(X(70),Y(34));g.lineTo(X(70),Y(26));g.stroke();arrow(X(70),Y(28),X(70),Y(21.5),'#8C7752');
+  g.fillStyle=hl;g.fillRect(X(59),Y(-1),Math.max(3,1.6*s),6*s);arrow(X(57),Y(-5),X(44),Y(-10),water);
+  mark('s_filled',X(25),Y(15));mark('s_plug',X(78),Y(2));mark('s_main',X(62),Y(12));mark('s_unm',X(115),Y(15));
+  mark('s_fill',X(20),Y(34));mark('s_upper',X(115),Y(34));mark('s_draw',X(115),Y(-4));mark('s_barr',X(66),Y(-4));mark('s_drain',X(38),Y(-10));
+  txt(t('s_ucs'),X(70),Y(25),'center',muted,500,10);
+  note.textContent=fill(t('secNoteSt'),{b:nf(P.auBC,1)});
+ }else{
+  const K=stackState(YEAR),Hs=Math.max(K.H,25),xmin=-420,xmax=600,ymin=-8,ymax=Hs+10;
+  const sx=(w-16)/(xmax-xmin),sy=(h-40)/(ymax-ymin),X=x=>8+(x-xmin)*sx,Y=y=>h-26-(y-ymin)*sy;
+  g.fillStyle=rule;g.fillRect(0,Y(0),w,Y(ymin)-Y(0)+4);
+  g.fillStyle='#8A8F93';g.fillRect(X(-370),Y(1.6),740*sx,1.6*sy);
+  g.strokeStyle='#2F3438';g.lineWidth=3;g.beginPath();g.moveTo(X(-380),Y(0));g.lineTo(X(380),Y(0));g.stroke();
+  for(let x=-340;x<=340;x+=60){g.beginPath();g.arc(X(x),Y(0.8),2.2,0,7);g.fillStyle='#3E4A52';g.fill();}
+  K.lifts.forEach((L,k)=>{if(L.h<0.05)return;const x0=-L.w/2,x1=L.w/2;poly([[X(x0),Y(1.6+L.y)],[X(x1),Y(1.6+L.y)],[X(x1),Y(1.6+L.y+L.h)],[X(x0),Y(1.6+L.y+L.h)]],k%2?'#9A907E':'#A79D8A','rgba(60,50,40,.35)');});
+  if(K.lifts.length){g.strokeStyle=C('--cu');g.lineWidth=1.6;g.setLineDash([5,4]);g.beginPath();
+   K.lifts.forEach((L,k)=>{const y0=1.6+L.y,y1=y0+L.h,x=-L.w/2-6;if(k===0)g.moveTo(X(x-10),Y(0));g.lineTo(X(x),Y(y0));g.lineTo(X(x),Y(y1+2));});
+   for(let k=K.lifts.length-1;k>=0;k--){const L=K.lifts[k],y0=1.6+L.y,y1=y0+L.h,x=L.w/2+6;g.lineTo(X(x),Y(y1+2));g.lineTo(X(x),Y(y0));}
+   g.lineTo(X(K.lifts[0].w/2+16),Y(0));g.stroke();g.setLineDash([]);}
+  for(const x of [-395,395])poly([[X(x-12),Y(0)],[X(x-5),Y(-4)],[X(x+5),Y(-4)],[X(x+12),Y(0)]],water);
+  poly([[X(460),Y(0)],[X(475),Y(-6)],[X(560),Y(-6)],[X(575),Y(0)]],water);arrow(X(410),Y(-2),X(458),Y(-2),water);
+  mark('s_liner',X(-300),Y(0)+12);mark('s_under',X(-150),Y(0)+12);
+  if(K.lifts.length){mark('s_lifts',X(0),Y(1.6+K.H*0.5));mark('s_cover',X(K.lifts[K.lifts.length-1].w/2+30),Y(1.6+K.H+2)-10);}
+  mark('s_ditch',X(395),Y(-4)+12);mark('s_cpond',X(517),Y(-6)+12);
+  txt(fill(t('s_ve'),{v:nf(sy/sx,0)}),w-6,12,'right',muted,500,10);
+  note.textContent=fill(t('secNoteSk'),{y:nf(YEAR,YEAR%1?1:0),h:nf(K.H,0)});
+ }
+ document.getElementById('secLg').innerHTML=marks.map((k,i)=>`<li><b>${i+1}</b>${t(k)}</li>`).join('');
+}
+
+/* ---------- camera controls ---------- */
+const cur={target:V(0,-300,0),r:22000,th:0,ph:0.25};
+const goal={target:cur.target.clone(),r:cur.r,th:cur.th,ph:cur.ph};
+let planMode=false,VIEWS={};
+function buildViews(){VIEWS={
+ both:{target:V(-300,-150*VE,300),r:18500,th:0.0,ph:0.95},
+ cu:{target:V(-3300,-120*VE,250),r:9800,th:-0.35,ph:0.95},
+ tsf:{target:V(-2950,20*VE,1350),r:7400,th:0.35,ph:0.9},
+ au:{target:V(2700,-300*VE,-500),r:7200,th:0.42,ph:0.98},
+ ug:{target:V(2250,-500*VE,-1000),r:1500+1250*VE,th:0.0,ph:Math.PI/2-0.05},
+ plan:{target:V(-100,0,-100),r:15500,th:0,ph:0.001}};}
+function placeCamera(){
+ const s=Math.sin(cur.ph);
+ camera.position.set(cur.target.x+cur.r*s*Math.sin(cur.th),cur.target.y+cur.r*Math.cos(cur.ph),cur.target.z+cur.r*s*Math.cos(cur.th));
+ camera.up.set(0,1,0);if(planMode&&cur.ph<0.03)camera.up.set(0,0,-1);
+ camera.near=Math.max(1,cur.r/1500);camera.far=cur.r*12+40000;camera.updateProjectionMatrix();camera.lookAt(cur.target);
+}
+const rMin=()=>120,rMax=()=>30000;
+let curView='both';
+function setView(k,instant){
+ const v=VIEWS[k];if(!v)return;planMode=(k==='plan');curView=k;
+ document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===k)));
+ goal.target.copy(v.target);goal.r=v.r;goal.ph=v.ph;
+ let th=v.th;while(th-cur.th>Math.PI)th-=2*Math.PI;while(cur.th-th>Math.PI)th+=2*Math.PI;goal.th=th;
+ if(k==='ug'){sUg.checked=true;sAu.checked=true;tCut.checked=true;applyVisibility();applyLayers();}
+ if(reduceMotion||instant){cur.target.copy(goal.target);cur.r=goal.r;cur.th=goal.th;cur.ph=goal.ph;}
+}
+const unpress=()=>{curView=null;document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed','false'));};
+const ptrs=new Map();let lastPinch=0,dragDist=0;
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY,b:e.button,sh:e.shiftKey});dragDist=0;if(ptrs.size===2){const a=[...ptrs.values()];lastPinch=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);}});
+function endPtr(e){const was=ptrs.get(e.pointerId);ptrs.delete(e.pointerId);if(e.type==='pointerup'&&was&&dragDist<5&&was.b===0)pick(e);}
+canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);
+function pan(dx,dy){
+ const f=new T.Vector3();camera.getWorldDirection(f);
+ const right=new T.Vector3().crossVectors(f,camera.up).normalize();const up=new T.Vector3().crossVectors(right,f).normalize();
+ const k=cur.r*0.0012;cur.target.add(right.multiplyScalar(-dx*k).add(up.multiplyScalar(dy*k)));goal.target.copy(cur.target);
+}
+canvas.addEventListener('pointermove',e=>{
+ const p=ptrs.get(e.pointerId);if(!p)return;
+ const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;dragDist+=Math.abs(dx)+Math.abs(dy);
+ if(dragDist>4)unpress();
+ if(ptrs.size===2){const a=[...ptrs.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+  if(lastPinch){cur.r=Math.min(rMax(),Math.max(rMin(),cur.r*lastPinch/d));goal.r=cur.r;}lastPinch=d;pan(dx/2,dy/2);return;}
+ if(p.b===2||p.sh||e.shiftKey){pan(dx,dy);return;}
+ planMode=false;cur.th-=dx*0.006;cur.ph=Math.min(Math.PI-0.05,Math.max(0.05,cur.ph-dy*0.006));goal.th=cur.th;goal.ph=cur.ph;
+});
+canvas.addEventListener('wheel',e=>{e.preventDefault();unpress();cur.r=Math.min(rMax(),Math.max(rMin(),cur.r*Math.exp(e.deltaY*0.0012)));goal.r=cur.r;},{passive:false});
+
+/* ---------- picking and highlight ---------- */
+const ray=new T.Raycaster();ray.params.Line.threshold=12;const mv2=new T.Vector2();
+const HL={on:false,keys:new Set(),end:0,list:[]};
+function resetHL(){HL.list.forEach(o=>{if(o.material&&o.material.emissive){o.material.emissive.copy(o.userData.e0||new T.Color(0,0,0));o.material.emissiveIntensity=o.userData.ei0??1;}});HL.list=[];HL.on=false;}
+function flash(keys){resetHL();HL.keys=new Set(keys);HL.on=true;HL.end=performance.now()+3200;
+ world.traverse(o=>{if((o.isMesh||o.isInstancedMesh)&&o.userData.k&&HL.keys.has(o.userData.k)&&o.material&&o.material.emissive){if(!o.userData.e0){o.userData.e0=o.material.emissive.clone();o.userData.ei0=o.material.emissiveIntensity;}HL.list.push(o);}});}
+function pick(e){
+ const r=canvas.getBoundingClientRect();mv2.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+ ray.setFromCamera(mv2,camera);const objs=[];world.traverse(o=>{if(o.userData.k&&(o.isMesh||o.isLineSegments)&&isVis(o))objs.push(o);});
+ const hit=ray.intersectObjects(objs,false)[0];if(hit)inspect(hit.object.userData.k);else closeInsp();
+}
+const insp=document.getElementById('insp');let inspK=null;
+function inspect(k){const I=INFO[k];if(!I)return;inspK=k;
+ const chip=document.getElementById('inspChip');chip.textContent=I.p==='cu'?t('siteCu'):t('siteAu');chip.style.background=`var(--${I.p})`;
+ document.getElementById('inspT').textContent=I[lang][0];document.getElementById('inspB').textContent=I[lang][1];insp.hidden=false;flash([k]);}
+function closeInsp(){insp.hidden=true;inspK=null;}
+document.getElementById('inspX').addEventListener('click',closeInsp);
+window.addEventListener('keydown',e=>{if(e.key==='Escape')closeInsp();});
+
+/* ---------- layers and visibility ---------- */
+const tTerrain=document.getElementById('tTerrain'),tCut=document.getElementById('tCut'),tLabels=document.getElementById('tLabels'),op=document.getElementById('op');
+const sCu=document.getElementById('sCu'),sAu=document.getElementById('sAu'),sPipe=document.getElementById('sPipe'),sWater=document.getElementById('sWater'),sUg=document.getElementById('sUg'),sFlow=document.getElementById('sFlow');
+function applyLayers(){
+ if(terrain)terrain.visible=tTerrain.checked;
+ terrainMat.clippingPlanes=tCut.checked?CLIP:[];terrainMat.needsUpdate=true;
+ terrainMat.opacity=op.value/100;terrainMat.depthWrite=op.value>=100;labelsOn=tLabels.checked;
+}
+function applyVisibility(){G.cu.visible=sCu.checked;G.au.visible=sAu.checked;G.cuP.visible=G.auP.visible=sPipe.checked;G.cuW.visible=G.auW.visible=sWater.checked;G.auU.visible=sUg.checked;}
+[tTerrain,tCut,tLabels].forEach(el=>el.addEventListener('change',applyLayers));op.addEventListener('input',applyLayers);
+[sCu,sAu,sPipe,sWater,sUg].forEach(el=>el.addEventListener('change',applyVisibility));
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+document.getElementById('home').addEventListener('click',()=>{setView('both');tTerrain.checked=true;applyLayers();});
+function setVE(v){VE=v;world.scale.y=VE;document.querySelectorAll('[data-ve]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.ve===v)));
+ const old=VIEWS[curView];buildViews();if(curView&&VIEWS[curView])setView(curView,false);
+ document.getElementById('veTag').textContent=fill(t('veTag'),{v});}
+document.querySelectorAll('[data-ve]').forEach(b=>b.addEventListener('click',()=>setVE(+b.dataset.ve)));
+
+/* ---------- tabs, language, wiring ---------- */
+document.querySelectorAll('#tabSeg button').forEach(b=>b.addEventListener('click',()=>{
+ TAB=b.dataset.tab;document.querySelectorAll('#tabSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+ ['lab','dec','sec'].forEach(k=>document.getElementById('tab_'+k).hidden=k!==TAB);if(TAB==='sec')drawSection();}));
+document.querySelectorAll('#secSeg button').forEach(b=>b.addEventListener('click',()=>{SEC=b.dataset.sec;document.querySelectorAll('#secSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));drawSection();}));
+let paramTimer=null;
+function onParam(grp){Mo=model();clearTimeout(paramTimer);paramTimer=setTimeout(()=>{setYear(YEAR,true);refresh2D();},90);}
+document.getElementById('bCopy').addEventListener('click',async e=>{const btn=e.currentTarget;
+ try{await navigator.clipboard.writeText(decTSV());btn.textContent=t('copied');}catch(err){btn.textContent=t('copyfail');}
+ setTimeout(()=>btn.textContent=t('copy'),2200);});
+const bPlay=document.getElementById('bPlay');
+function setPlaying(p){playing=p;document.getElementById('icPlay').style.display=p?'none':'';document.getElementById('icPause').style.display=p?'':'none';bPlay.setAttribute('aria-label',p?t('pause'):t('play'));}
+bPlay.addEventListener('click',()=>{if(!playing&&YEAR>=LOM-0.01)setYear(0,true);setPlaying(!playing);});
+document.getElementById('yr').addEventListener('input',e=>{setPlaying(false);setYear(parseFloat(e.target.value));});
+function applyLang(l){
+ lang=l;document.documentElement.lang=l;
+ document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===l)));
+ document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n);});
+ document.querySelectorAll('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle);});
+ CTRL.forEach(c=>{document.getElementById('o_'+c[1]).textContent=outText(c);});
+ document.getElementById('veTag').textContent=fill(t('veTag'),{v:VE});
+ document.getElementById('yOut').textContent=nf(YEAR,YEAR%1?1:0);
+ setPlaying(playing);refreshLabelText();refreshCube();refresh2D();placeCtrl();if(inspK)inspect(inspK);
+}
+document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
+window.addEventListener('resize',()=>{if(TAB==='sec')drawSection();});
+document.getElementById('info').addEventListener('toggle',()=>{setTimeout(()=>{if(TAB==='sec')drawSection();},0);});
+const mq=window.matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',()=>refresh2D());
+
+/* ---------- orientation cube ---------- */
+const cubeCanvas=document.getElementById('cube');
+const cr=new T.WebGLRenderer({canvas:cubeCanvas,antialias:true,alpha:true});
+cr.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+const cs=new T.Scene(),cc=new T.PerspectiveCamera(30,1,0.1,20);
+cs.add(new T.AmbientLight(0xffffff,1));
+const faceKeys=['fE','fW','fTop','fBot','fS','fN'];
+const faceCol=['#DCE3E6','#DCE3E6','#F2F5F6','#C9D1D5','#E6E1D3','#D7E3EE'];
+const faceMats=faceKeys.map(()=>new T.MeshBasicMaterial({color:0xffffff}));
+function makeFaceTex(i,hover){
+ const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');
+ g.fillStyle=hover?'#2F6DB5':faceCol[i];g.fillRect(0,0,128,128);
+ g.strokeStyle='#17222A';g.lineWidth=5;g.strokeRect(2.5,2.5,123,123);
+ g.fillStyle=hover?'#FFFFFF':'#17222A';const txt=t(faceKeys[i]);
+ g.font='600 '+(txt.length>4?26:38)+'px "Barlow Semi Condensed", Barlow, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,64,66);
+ const tex=new T.CanvasTexture(c);tex.anisotropy=4;return tex;
+}
+let hoverFace=-1;
+function refreshCube(){faceMats.forEach((m,i)=>{if(m.map)m.map.dispose();m.map=makeFaceTex(i,i===hoverFace);m.needsUpdate=true;});}
+const cubeMesh=new T.Mesh(new T.BoxGeometry(1,1,1),faceMats);cs.add(cubeMesh);
+cs.add(new T.LineSegments(new T.EdgesGeometry(cubeMesh.geometry),new T.LineBasicMaterial({color:0x17222A})));
+refreshCube();
+const dirv=new T.Vector3();
+function renderCube(){
+ const w=cubeCanvas.clientWidth,h=cubeCanvas.clientHeight;
+ if(cubeCanvas.width!==Math.round(w*cr.getPixelRatio()))cr.setSize(w,h,false);
+ dirv.copy(camera.position).sub(cur.target).normalize().multiplyScalar(3.4);
+ cc.position.copy(dirv);cc.up.copy(camera.up);cc.lookAt(0,0,0);cr.render(cs,cc);
+}
+const rc=new T.Raycaster(),mv=new T.Vector2();
+function pickFace(e){const r=cubeCanvas.getBoundingClientRect();mv.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+ rc.setFromCamera(mv,cc);const hit=rc.intersectObject(cubeMesh)[0];return hit?Math.floor(hit.faceIndex/2):-1;}
+function viewFromFace(f){
+ const wrapTh=th=>{while(th-cur.th>Math.PI)th-=2*Math.PI;while(cur.th-th>Math.PI)th+=2*Math.PI;return th;};
+ planMode=false;unpress();
+ if(f===2){setView('plan');return;}
+ if(f===3){goal.ph=Math.PI-0.06;return;}
+ const map={0:Math.PI/2,1:-Math.PI/2,4:0,5:Math.PI};
+ goal.th=wrapTh(map[f]);goal.ph=Math.PI/2-0.02;
+ if(reduceMotion){cur.th=goal.th;cur.ph=goal.ph;}
+}
+let cdrag=null;
+cubeCanvas.addEventListener('pointerdown',e=>{cubeCanvas.setPointerCapture(e.pointerId);cdrag={x:e.clientX,y:e.clientY,moved:0};});
+cubeCanvas.addEventListener('pointermove',e=>{
+ if(!cdrag){const f=pickFace(e);if(f!==hoverFace){hoverFace=f;refreshCube();}return;}
+ const dx=e.clientX-cdrag.x,dy=e.clientY-cdrag.y;cdrag.x=e.clientX;cdrag.y=e.clientY;cdrag.moved+=Math.abs(dx)+Math.abs(dy);
+ if(cdrag.moved>4){planMode=false;unpress();cur.th-=dx*0.012;cur.ph=Math.min(Math.PI-0.05,Math.max(0.05,cur.ph-dy*0.012));goal.th=cur.th;goal.ph=cur.ph;}
+});
+cubeCanvas.addEventListener('pointerup',e=>{if(cdrag&&cdrag.moved<=4){const f=pickFace(e);if(f>=0)viewFromFace(f);}cdrag=null;});
+cubeCanvas.addEventListener('pointerleave',()=>{if(!cdrag&&hoverFace!==-1){hoverFace=-1;refreshCube();}});
+cubeCanvas.addEventListener('pointercancel',()=>{cdrag=null;});
+
+/* ---------- draggable panels ---------- */
+document.querySelectorAll('.grip').forEach(grip=>{
+ const panel=grip.closest('.panel');
+ grip.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();});
+ grip.addEventListener('pointerdown',e=>{
+  if(window.innerWidth<820)return;
+  e.preventDefault();e.stopPropagation();grip.setPointerCapture(e.pointerId);
+  const r=panel.getBoundingClientRect();const ox=e.clientX-r.left,oy=e.clientY-r.top;
+  panel.classList.add('dragging');panel.dataset.moved='1';
+  const move=ev=>{const W=window.innerWidth,H=window.innerHeight;
+   const x=Math.min(W-40,Math.max(-r.width+60,ev.clientX-ox)),y=Math.min(H-30,Math.max(0,ev.clientY-oy));
+   panel.style.left=x+'px';panel.style.top=y+'px';panel.style.right='auto';panel.style.bottom='auto';};
+  const up=()=>{panel.classList.remove('dragging');grip.removeEventListener('pointermove',move);grip.removeEventListener('pointerup',up);grip.removeEventListener('pointercancel',up);};
+  grip.addEventListener('pointermove',move);grip.addEventListener('pointerup',up);grip.addEventListener('pointercancel',up);
+ });
+});
+const headEl=document.getElementById('head'),ctrlEl=document.getElementById('ctrl');
+function placeCtrl(){
+ if(ctrlEl.dataset.moved||window.innerWidth<820){if(window.innerWidth<820){ctrlEl.style.top='';ctrlEl.style.maxHeight='';}return;}
+ const top=headEl.offsetTop+headEl.offsetHeight+10;ctrlEl.style.top=top+'px';ctrlEl.style.maxHeight='calc(100% - '+(top+14)+'px)';
+}
+window.addEventListener('resize',placeCtrl);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{placeCtrl();refresh2D();refreshCube();});
+
+/* ---------- keep model centred between panels ---------- */
+let viewShift=0;
+function freeCenterShift(){
+ const W=stage.clientWidth;if(window.innerWidth<820)return 0;
+ const ctrl=ctrlEl.getBoundingClientRect(),info=document.getElementById('info').getBoundingClientRect(),head=headEl.getBoundingClientRect();
+ let left=0,right=W;[ctrl,head].forEach(r=>{if(r.left<W*0.4)left=Math.max(left,r.right);});
+ if(info.left>W*0.55&&info.top<window.innerHeight*0.5)right=Math.min(right,info.left);
+ if(right-left<200)return 0;return (left+right)/2-W/2;
+}
+function applyShift(){
+ const s=Math.round(freeCenterShift());
+ if(s!==viewShift){viewShift=s;const w=stage.clientWidth,h=stage.clientHeight;
+  if(s)camera.setViewOffset(w,h,-s,0,w,h);else camera.clearViewOffset();camera.updateProjectionMatrix();}
+}
+
+/* ---------- loop ---------- */
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;viewShift=null;camera.clearViewOffset();camera.updateProjectionMatrix();applyShift();}
+new ResizeObserver(resize).observe(stage);
+let lastT=performance.now();
+function frame(now){
+ const dt=Math.min(0.1,(now-lastT)/1000);lastT=now;
+ const a=reduceMotion?1:0.085;
+ cur.target.lerp(goal.target,a);cur.r+=(goal.r-cur.r)*a;cur.th+=(goal.th-cur.th)*a;cur.ph+=(goal.ph-cur.ph)*a;
+ if(sFlow.checked)flowT+=dt;
+ if(playing){const y=YEAR+dt*1.25;if(y>=LOM){setYear(LOM,true);setPlaying(false);}else setYear(y);}
+ updateFlows();animFill();
+ const act=Math.floor(flowT/4)%4;SPIG.forEach(s=>{if(!HL.list.includes(s.m))s.m.material.color.set(s.sec===act?'#E39A2E':'#6F777C');});
+ if(HL.on){if(now>HL.end)resetHL();else{const k=0.35+0.35*Math.sin(now*0.012);HL.list.forEach(o=>{o.material.emissive.set('#FF6A1F');o.material.emissiveIntensity=k;});}}
+ applyShift();placeCamera();renderer.render(scene,camera);updateLabels();renderCube();requestAnimationFrame(frame);
+}
+
+/* ---------- init ---------- */
+if(reduceMotion)sFlow.checked=false;
+buildControls();buildTerrain();buildChalco();buildAurum();
+world.scale.y=VE;buildViews();
+applyLayers();setYear(12,true);applyVisibility();
+cur.target.copy(VIEWS.both.target);cur.r=24000;cur.th=-0.5;cur.ph=0.32;goal.target.copy(cur.target);goal.r=cur.r;goal.th=cur.th;goal.ph=cur.ph;
+setView('both',reduceMotion);
+if(window.innerWidth<820)document.getElementById('info').open=false;
+resize();applyLang('en');placeCtrl();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
